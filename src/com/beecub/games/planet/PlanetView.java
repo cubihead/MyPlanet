@@ -1,11 +1,14 @@
 package com.beecub.games.planet;
 
+import java.util.Calendar;
+
 import android.beecub.games.planet.R;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,8 +31,11 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         private static final String KEY_DY = "mDY";
 
         private static final String KEY_HEADING = "mHeading";
+        
         private static final String KEY_Planet_HEIGHT = "mPlanetHeight";
         private static final String KEY_Planet_WIDTH = "mPlanetWidth";
+        private static final String KEY_Moon_HEIGHT = "mMoonHeight";
+        private static final String KEY_Moon_WIDTH = "mMoonWidth";
 
         private static final String KEY_X = "mX";
         private static final String KEY_Y = "mY";
@@ -57,17 +63,18 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         /** Handle to the surface manager object we interact with */
         private SurfaceHolder mSurfaceHolder;
         
-        /** What to draw for the planet in its normal state */
-        private Drawable mPlanetImage;
-        
-        /** The drawable to use as the background of the animation canvas */
+        // background
         private Bitmap mBackgroundImage;
         
-        /** Pixel height of planet image. */
+        // planet
+        private Drawable mPlanetImage;        
         private int mPlanetHeight;
-
-        /** Pixel width of planet image. */
         private int mPlanetWidth;
+        
+        // moon
+        private Drawable mMoonImage;
+        private int mMoonHeight;
+        private int mMoonWidth;
         
         private int mDaytime;
         
@@ -105,24 +112,26 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         
         public PlanetThread(SurfaceHolder surfaceHolder, Context context,
                 Handler handler) {
-         // get handles to some important objects
+            
             mSurfaceHolder = surfaceHolder;
             mHandler = handler;
             //mContext = context;
 
             Resources res = context.getResources();
-            // cache handles to our key sprites & other drawables
-            mPlanetImage = context.getResources().getDrawable(
-                    R.drawable.icon);
 
-            // load background image as a Bitmap instead of a Drawable b/c
-            // we don't need to transform it and it's faster to draw this way
-            mBackgroundImage = BitmapFactory.decodeResource(res,
-                    R.drawable.ic_background_overview);
-            
-            // Use the regular Planet image as the model size for all sprites
+            // planet
+            mPlanetImage = context.getResources().getDrawable(R.drawable.ic_planet);
             mPlanetWidth = mPlanetImage.getIntrinsicWidth();
             mPlanetHeight = mPlanetImage.getIntrinsicHeight();
+            
+            // moon
+            mMoonImage = context.getResources().getDrawable(R.drawable.ic_launcher);
+            mMoonWidth = mMoonImage.getIntrinsicWidth();
+            mMoonHeight = mMoonImage.getIntrinsicHeight();
+
+            
+            mBackgroundImage = BitmapFactory.decodeResource(res,
+                    R.drawable.ic_background_overview); 
             
             mDX = 0;
             mDY = 0;
@@ -174,6 +183,9 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
 
                 mPlanetWidth = savedState.getInt(KEY_Planet_WIDTH);
                 mPlanetHeight = savedState.getInt(KEY_Planet_HEIGHT);
+                
+                mMoonWidth = savedState.getInt(KEY_Moon_WIDTH);
+                mMoonHeight = savedState.getInt(KEY_Moon_HEIGHT);
             }
         }
         
@@ -193,6 +205,8 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
                     map.putDouble(KEY_HEADING, Double.valueOf(mHeading));
                     map.putInt(KEY_Planet_WIDTH, Integer.valueOf(mPlanetWidth));
                     map.putInt(KEY_Planet_HEIGHT, Integer.valueOf(mPlanetHeight));
+                    map.putInt(KEY_Moon_WIDTH, Integer.valueOf(mMoonWidth));
+                    map.putInt(KEY_Moon_HEIGHT, Integer.valueOf(mMoonHeight));
                 }
             }
             return map;
@@ -303,27 +317,86 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
          */
         private void doDraw(Canvas canvas) {
             
-            Log.v(Planet.LOG_TAG, "doDraw()");
+            //Log.v(Planet.LOG_TAG, "doDraw()");
             
-            // Draw the background image. Operations on the Canvas accumulate
-            // so this is like clearing the screen.
             canvas.drawBitmap(mBackgroundImage, 0, 0, null);
-
-            // Draw the ship with its current rotation
+            
+            
             canvas.save();
-            canvas.rotate((float) mHeading, (float) mX, mCanvasHeight
-                    - (float) mY);
+            
+            //Log.v(Planet.LOG_TAG, "Time: " + calendar.get(Calendar.HOUR_OF_DAY));
             
             //Log.v(Planet.LOG_TAG, "Canvas Width: " + mCanvasWidth + "| Planet Width: " + mPlanetWidth);
             //Log.v(Planet.LOG_TAG, "Canvas Height: " + mCanvasHeight + "| Planet Height: " + mPlanetHeight);
             
-            mPlanetImage.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, mCanvasHeight / 2 - mPlanetHeight / 2, mCanvasWidth / 2 + mPlanetWidth / 2, mCanvasHeight / 2 + mPlanetHeight / 2);
+            mPlanetImage.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, 
+                    mCanvasHeight / 2 - mPlanetHeight / 2, 
+                    mCanvasWidth / 2 + mPlanetWidth / 2, 
+                    mCanvasHeight / 2 + mPlanetHeight / 2);
+            
             canvas.rotate(mRotation, mCanvasWidth / 2, mCanvasHeight / 2);
             
-            mRotation += 0.1;
+            mRotation += 0.05;
+            if(mRotation >= 360) mRotation = 0;
             
             mPlanetImage.draw(canvas);
+            
             canvas.restore();
+            
+            drawMoon(canvas);
+        }
+        
+        private void drawMoon(Canvas canvas) {
+            Calendar calendar = Calendar.getInstance();
+            double hour = calendar.get(Calendar.HOUR_OF_DAY);
+            double minutes = calendar.get(Calendar.MINUTE);
+            
+            hour = 1;
+            minutes = 0;
+            
+            if(hour >= 8) hour = 24 - hour;
+            minutes += hour * 60;
+            
+            double minutesP = 2;
+            minutesP = minutes / 720 * 100;
+            
+            int left = 0;
+            int top = 0;
+            int right = 0;
+            int bottom = 0;
+            
+            if(minutesP <= 50) {
+                left = (int) (mCanvasWidth / 5 + ((mCanvasWidth / 5) / 100 * minutesP));
+                top = (int) (mCanvasHeight / 2 + ((mCanvasHeight / 2) / 100 * minutesP));
+            } else {
+                
+            }
+            right = left + mMoonWidth / 2;
+            bottom = top + mMoonHeight / 2;
+            left = left - mMoonWidth / 2;
+            top = top - mMoonHeight / 2;
+            
+            Paint paint;
+            paint = new Paint();
+            paint.setAntiAlias(true);
+            paint.setARGB(255, 0, 255, 0);
+            //canvas.drawLine(left, 0, 0, bottom, paint);
+            //canvas.drawRect(left, top, right, bottom, paint);
+            canvas.drawCircle(left, 0, 5, paint);
+            canvas.drawCircle(right, 0, 5, paint);
+            
+            Log.v(Planet.LOG_TAG, "W: " + mCanvasWidth + " H: " + mCanvasHeight + " ..... " + left + " - " + top + " - " + right + " - " + bottom);
+            
+            mMoonImage.setBounds(left, top, right, bottom);
+//            mMoonImage.setBounds(mCanvasWidth / 2 - mMoonWidth / 2, 
+//                    mCanvasHeight / 2 - mMoonHeight / 2, 
+//                    mCanvasWidth / 2 + mMoonWidth / 2, 
+//                    mCanvasHeight / 2 + mMoonHeight / 2);
+            
+            mMoonImage.draw(canvas);
+            
+            canvas.restore();           
+            
         }
         
         /**

@@ -3,7 +3,8 @@
       package="android.beecub.games.planet"
       android:versionCode="1"
       android:versionName="1.0"
-      android:installLocation="auto">
+      android:installLocation="auto"
+      >
     <uses-sdk android:minSdkVersion="4" />
     
    	<supports-screens android:resizeable="true"
@@ -13,7 +14,9 @@
 
     <application android:icon="@drawable/ic_launcher" android:label="@string/app_name">
         <activity android:name="com.beecub.games.planet.Planet"
-                  android:label="@string/app_name">
+                  android:label="@string/app_name"
+                  android:screenOrientation="portrait"
+                  >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
