@@ -8,7 +8,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -76,7 +75,7 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         private int mMoonHeight;
         private int mMoonWidth;
         
-        private int mDaytime;
+        private double mDaytime;
         
         private int mSpeed;
         
@@ -140,17 +139,12 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         
         public void doStart() {
             synchronized (mSurfaceHolder) {
-                // First set the game for Medium difficulty
-                mDaytime = 1;
+                mDaytime = 0;
                 mSpeed = 1;
 
-                // pick a convenient initial location for the Planet sprite
                 mX = mCanvasWidth / 2;
                 mY = mCanvasHeight / 2;
-
-                // start with a little random motion
-                mDY = mSpeed;
-                mDX = mSpeed;
+                
                 mHeading = 0;
                 
                 setState(STATE_RUNNING);
@@ -351,7 +345,8 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             double hour = calendar.get(Calendar.HOUR_OF_DAY);
             double minutes = calendar.get(Calendar.MINUTE);
             
-            hour = 1;
+            hour = 3;
+            hour = mDaytime;
             minutes = 0;
             
             if(hour >= 8) hour = 24 - hour;
@@ -360,42 +355,38 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             double minutesP = 2;
             minutesP = minutes / 720 * 100;
             
-            int left = 0;
-            int top = 0;
-            int right = 0;
-            int bottom = 0;
+            double left = 0;
+            double top = 0;
+            double right = 0;
+            double bottom = 0;
             
             if(minutesP <= 50) {
-                left = (int) (mCanvasWidth / 5 + ((mCanvasWidth / 5) / 100 * minutesP));
-                top = (int) (mCanvasHeight / 2 + ((mCanvasHeight / 2) / 100 * minutesP));
+                left = ( mCanvasWidth / 2.0 ) / 100.0 * (minutesP*2);
+                //top = ( mCanvasHeight / 2.0 ) / 100.0 * (100.0 - minutesP );
+                top = -1*Math.pow((0.025 * left), 2) + (0) + (mCanvasHeight / 4);
+                
+                
+                
+                //left = (int) (mCanvasWidth / 5 + ((mCanvasWidth / 5) / 100 * minutesP));
+                //top = (int) (mCanvasHeight / 2 + ((mCanvasHeight / 2) / 100 * minutesP));
             } else {
                 
             }
             right = left + mMoonWidth / 2;
             bottom = top + mMoonHeight / 2;
-            left = left - mMoonWidth / 2;
-            top = top - mMoonHeight / 2;
+            //left = left - mMoonWidth / 2;
+            //top = top - mMoonHeight / 2;
             
-            Paint paint;
-            paint = new Paint();
-            paint.setAntiAlias(true);
-            paint.setARGB(255, 0, 255, 0);
-            //canvas.drawLine(left, 0, 0, bottom, paint);
-            //canvas.drawRect(left, top, right, bottom, paint);
-            canvas.drawCircle(left, 0, 5, paint);
-            canvas.drawCircle(right, 0, 5, paint);
+            Log.v(Planet.LOG_TAG, "W: " + mCanvasWidth + " H: " + mCanvasHeight + " ..... " + (int)left + " | " + (int)top + " | " + (int)right + " | " + (int)bottom);
             
-            Log.v(Planet.LOG_TAG, "W: " + mCanvasWidth + " H: " + mCanvasHeight + " ..... " + left + " - " + top + " - " + right + " - " + bottom);
-            
-            mMoonImage.setBounds(left, top, right, bottom);
-//            mMoonImage.setBounds(mCanvasWidth / 2 - mMoonWidth / 2, 
-//                    mCanvasHeight / 2 - mMoonHeight / 2, 
-//                    mCanvasWidth / 2 + mMoonWidth / 2, 
-//                    mCanvasHeight / 2 + mMoonHeight / 2);
+            mMoonImage.setBounds((int)left, (int)top, (int)right, (int)bottom);
             
             mMoonImage.draw(canvas);
             
-            canvas.restore();           
+            canvas.restore();
+            
+            mDaytime += 0.01;
+            if(mDaytime > 6 ) mDaytime = 0;
             
         }
         
