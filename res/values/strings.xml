@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Planet</string>
+    <string name="overview">Planet</string>
+    <string name="factory">Factory</string>
+    <string name="research">Research</string>
+</resources>

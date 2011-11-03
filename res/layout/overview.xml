@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent" android:orientation="vertical">
+	
+	<TextView
+		android:text="TextView"
+		android:id="@+id/textView1"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" />
+		
+	<com.beecub.games.planet.PlanetView
+      android:id="@+id/planetview"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"/>
+
+<!-- 	<ImageView  -->
+<!-- 		android:id="@+id/imageView1"  -->
+<!-- 		android:layout_width="wrap_content"  -->
+<!-- 		android:layout_height="wrap_content"> -->
+<!-- 	</ImageView> -->
+	
+</LinearLayout>
