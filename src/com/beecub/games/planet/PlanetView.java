@@ -8,6 +8,9 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,6 +38,8 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         private static final String KEY_Planet_WIDTH = "mPlanetWidth";
         private static final String KEY_Moon_HEIGHT = "mMoonHeight";
         private static final String KEY_Moon_WIDTH = "mMoonWidth";
+        private static final String KEY_Sun_HEIGHT = "mSunHeight";
+        private static final String KEY_Sun_WIDTH = "mSunWidth";
 
         private static final String KEY_X = "mX";
         private static final String KEY_Y = "mY";
@@ -42,28 +47,17 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         public static final int PHYS_DOWN_ACCEL_SEC = 35;
         public static final int PHYS_SLEW_SEC = 120; // degrees/second rotate
         
-        /**
-         * Current height of the surface/canvas.
-         * 
-         * @see #setSurfaceSize
-         */
         private int mCanvasHeight = 1;
-
-        /**
-         * Current width of the surface/canvas.
-         * 
-         * @see #setSurfaceSize
-         */
         private int mCanvasWidth = 1;
         
-        /** Message handler used by thread to interact with TextView */
-        private Handler mHandler;
-        
-        /** Handle to the surface manager object we interact with */
         private SurfaceHolder mSurfaceHolder;
         
         // background
         private Bitmap mBackgroundImage;
+        private float mBackgroundOffset = 0.0F;
+        
+        // darkness
+        private Bitmap mDarknessImage;
         
         // planet
         private Drawable mPlanetImage;        
@@ -75,77 +69,50 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         private int mMoonHeight;
         private int mMoonWidth;
         
+        // sun
+        private Drawable mSunImage;
+        private int mSunHeight;
+        private int mSunWidth;
+        
         private double mDaytime;
-        
-        private int mSpeed;
-        
-        /** X of planet center. */
-        private double mX;
-
-        /** Y of planet center. */
-        private double mY;
-        
-        /** Velocity dx. */
-        private double mDX;
-
-        /** Velocity dy. */
-        private double mDY;
-        
-        /**
-         * Planet heading in degrees, with 0 up, 90 right. Kept in the range
-         * 0..360.
-         */
-        private double mHeading;
         
         private float mRotation;
         
-        /** The state of the game. One of RUNNING, PAUSE*/
         private int mMode;
         
-        /** Currently rotating, -1 left, 0 none, 1 right. */
-        private int mRotating;
-        
-        /** Indicate whether the surface has been created & is ready to draw */
         private boolean mRun = false;
+        
+        private Resources mResources;
         
         
         public PlanetThread(SurfaceHolder surfaceHolder, Context context,
                 Handler handler) {
             
             mSurfaceHolder = surfaceHolder;
-            mHandler = handler;
             //mContext = context;
 
-            Resources res = context.getResources();
+            mResources = context.getResources();
 
             // planet
-            mPlanetImage = context.getResources().getDrawable(R.drawable.ic_planet);
-            mPlanetWidth = mPlanetImage.getIntrinsicWidth();
-            mPlanetHeight = mPlanetImage.getIntrinsicHeight();
+            mPlanetImage = context.getResources().getDrawable(R.drawable.planet);
             
             // moon
-            mMoonImage = context.getResources().getDrawable(R.drawable.ic_launcher);
-            mMoonWidth = mMoonImage.getIntrinsicWidth();
-            mMoonHeight = mMoonImage.getIntrinsicHeight();
+            mMoonImage = context.getResources().getDrawable(R.drawable.moon);
+            
+            // sun
+            mSunImage = context.getResources().getDrawable(R.drawable.sun);
 
             
-            mBackgroundImage = BitmapFactory.decodeResource(res,
-                    R.drawable.ic_background_overview); 
+            mBackgroundImage = BitmapFactory.decodeResource(mResources,
+                    R.drawable.background_overview); 
+            mDarknessImage  = BitmapFactory.decodeResource(mResources,
+                    R.drawable.dark); 
             
-            mDX = 0;
-            mDY = 0;
-            mHeading = 0;
         }
         
         public void doStart() {
             synchronized (mSurfaceHolder) {
                 mDaytime = 0;
-                mSpeed = 1;
-
-                mX = mCanvasWidth / 2;
-                mY = mCanvasHeight / 2;
-                
-                mHeading = 0;
                 
                 setState(STATE_RUNNING);
             }
@@ -167,19 +134,15 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         public synchronized void restoreState(Bundle savedState) {
             synchronized (mSurfaceHolder) {
                 setState(STATE_PAUSE);
-                mRotating = 0;
-                
-                mX = savedState.getDouble(KEY_X);
-                mY = savedState.getDouble(KEY_Y);
-                mDX = savedState.getDouble(KEY_DX);
-                mDY = savedState.getDouble(KEY_DY);
-                mHeading = savedState.getDouble(KEY_HEADING);
 
                 mPlanetWidth = savedState.getInt(KEY_Planet_WIDTH);
                 mPlanetHeight = savedState.getInt(KEY_Planet_HEIGHT);
                 
                 mMoonWidth = savedState.getInt(KEY_Moon_WIDTH);
                 mMoonHeight = savedState.getInt(KEY_Moon_HEIGHT);
+                
+                mSunWidth = savedState.getInt(KEY_Sun_WIDTH);
+                mSunHeight = savedState.getInt(KEY_Sun_HEIGHT);
             }
         }
         
@@ -192,15 +155,12 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         public Bundle saveState(Bundle map) {
             synchronized (mSurfaceHolder) {
                 if (map != null) {
-                    map.putDouble(KEY_X, Double.valueOf(mX));
-                    map.putDouble(KEY_Y, Double.valueOf(mY));
-                    map.putDouble(KEY_DX, Double.valueOf(mDX));
-                    map.putDouble(KEY_DY, Double.valueOf(mDY));
-                    map.putDouble(KEY_HEADING, Double.valueOf(mHeading));
                     map.putInt(KEY_Planet_WIDTH, Integer.valueOf(mPlanetWidth));
                     map.putInt(KEY_Planet_HEIGHT, Integer.valueOf(mPlanetHeight));
                     map.putInt(KEY_Moon_WIDTH, Integer.valueOf(mMoonWidth));
                     map.putInt(KEY_Moon_HEIGHT, Integer.valueOf(mMoonHeight));
+                    map.putInt(KEY_Sun_WIDTH, Integer.valueOf(mSunWidth));
+                    map.putInt(KEY_Sun_HEIGHT, Integer.valueOf(mSunHeight));
                 }
             }
             return map;
@@ -239,21 +199,13 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
                 mMode = mode;
 
                 if (mMode == STATE_RUNNING) {
-                    Message msg = mHandler.obtainMessage();
                     Bundle b = new Bundle();
                     b.putString("text", "");
                     b.putInt("viz", View.INVISIBLE);
-                    msg.setData(b);
-                    mHandler.sendMessage(msg);
                 } else {
-                    mRotating = 0;
-
-                    Message msg = mHandler.obtainMessage();
                     Bundle b = new Bundle();
                     b.putString("text", "testtext_setState");
                     b.putInt("viz", View.VISIBLE);
-                    msg.setData(b);
-                    mHandler.sendMessage(msg);
                 }
             }
         }
@@ -297,11 +249,23 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             // synchronized to make sure these all change atomically
             synchronized (mSurfaceHolder) {
                 mCanvasWidth = width;
-                mCanvasHeight = height;
+                mCanvasHeight = height; 
+                
+                mPlanetWidth = (int)(width / 1.5);
+                mPlanetHeight = mPlanetWidth;
+                
+                mMoonWidth = mPlanetWidth / 4;
+                mMoonHeight = mPlanetHeight / 4;
+                
+                mSunWidth = mPlanetWidth / 4;
+                mSunHeight = mPlanetHeight / 4;               
+                
 
                 // don't forget to resize the background image
                 mBackgroundImage = mBackgroundImage.createScaledBitmap(
                         mBackgroundImage, width, height, true);
+                mDarknessImage = mDarknessImage.createScaledBitmap(
+                        mDarknessImage, width, height, true);
             }
         }
         
@@ -311,11 +275,7 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
          */
         private void doDraw(Canvas canvas) {
             
-            //Log.v(Planet.LOG_TAG, "doDraw()");
-            
-            canvas.drawBitmap(mBackgroundImage, 0, 0, null);
-            
-            
+            drawBackground(canvas);            
             canvas.save();
             
             //Log.v(Planet.LOG_TAG, "Time: " + calendar.get(Calendar.HOUR_OF_DAY));
@@ -330,26 +290,72 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             
             canvas.rotate(mRotation, mCanvasWidth / 2, mCanvasHeight / 2);
             
-            mRotation += 0.05;
+            mRotation += 0.03;
             if(mRotation >= 360) mRotation = 0;
             
             mPlanetImage.draw(canvas);
             
             canvas.restore();
             
-            drawMoon(canvas);
+            drawMoonSun(canvas);
+            
+            drawText(canvas);
         }
         
-        private void drawMoon(Canvas canvas) {
+        private void drawBackground(Canvas canvas) {
+            mBackgroundOffset += 0.1;
+            if (mBackgroundOffset > mCanvasWidth)
+              this.mBackgroundOffset -= mBackgroundImage.getWidth();
+            canvas.save();
+            canvas.translate(mBackgroundOffset, 0);
+            canvas.drawBitmap(mBackgroundImage, 0, 0, null);
+            canvas.restore();
+            canvas.save();
+            canvas.translate(mBackgroundOffset - mBackgroundImage.getWidth(), 0);
+            canvas.drawBitmap(mBackgroundImage, 0, 0, null);
+            canvas.restore();
+        }
+        
+        private void drawText(Canvas canvas) {
+            Paint paint = new Paint();
+            int textSize = 27;
+            
+            canvas.save();
+            
+            //Typeface typeface = Typeface.createFromAsset(getContext().getAssets(), "fonts/YanoneKaffeesatz.ttf");
+            //paint.setTypeface(typeface);
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(Color.WHITE);
+            paint.setTextSize(textSize + 10);
+            canvas.drawText(Planet.mName, 5, 5 + textSize, paint);
+            paint.setTextSize(textSize);
+            canvas.drawText(mResources.getString(R.string.population) + ": " + Planet.mPopulation, 5, 10 + textSize * 2, paint);
+            
+            canvas.restore();
+        }
+        
+        private void drawMoonSun(Canvas canvas) {
+            boolean bDaytime = true;
             Calendar calendar = Calendar.getInstance();
             double hour = calendar.get(Calendar.HOUR_OF_DAY);
             double minutes = calendar.get(Calendar.MINUTE);
             
             hour = 3;
-            hour = mDaytime;
+            hour = mDaytime;            
             minutes = 0;
             
-            if(hour >= 8) hour = 24 - hour;
+            if(hour <= 6) {
+                hour += 6;
+                bDaytime = false;
+            }
+            else if(hour >= 18) {
+                hour -= 18;
+                bDaytime = false;
+            }
+            else if(hour > 6 && hour < 18) {
+                hour -= 6;
+                bDaytime = true;
+            }
             minutes += hour * 60;
             
             double minutesP = 2;
@@ -360,33 +366,41 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             double right = 0;
             double bottom = 0;
             
-            if(minutesP <= 50) {
+            if(minutesP <= 100) {
                 left = ( mCanvasWidth / 2.0 ) / 100.0 * (minutesP*2);
                 //top = ( mCanvasHeight / 2.0 ) / 100.0 * (100.0 - minutesP );
-                top = -1*Math.pow((0.025 * left), 2) + (0) + (mCanvasHeight / 4);
-                
-                
-                
-                //left = (int) (mCanvasWidth / 5 + ((mCanvasWidth / 5) / 100 * minutesP));
-                //top = (int) (mCanvasHeight / 2 + ((mCanvasHeight / 2) / 100 * minutesP));
-            } else {
-                
+                //top = -1*Math.pow((0.025 * left), 2) + (0) + (mCanvasHeight / 4);
+                //top = 0.005 * Math.pow(left, 2) + 2 * left + (mCanvasHeight / 4);
+                top = 0.003 * Math.pow(left, 2) + (-1.3481 * left) + (mCanvasHeight / 2.5);
             }
-            right = left + mMoonWidth / 2;
-            bottom = top + mMoonHeight / 2;
-            //left = left - mMoonWidth / 2;
-            //top = top - mMoonHeight / 2;
             
-            Log.v(Planet.LOG_TAG, "W: " + mCanvasWidth + " H: " + mCanvasHeight + " ..... " + (int)left + " | " + (int)top + " | " + (int)right + " | " + (int)bottom);
+            //Log.v(Planet.LOG_TAG, "W: " + mCanvasWidth + " H: " + mCanvasHeight + " D: " + mDaytime + " ..... " + (int)left + " | " + (int)top + " | " + (int)right + " | " + (int)bottom);
             
-            mMoonImage.setBounds((int)left, (int)top, (int)right, (int)bottom);
             
-            mMoonImage.draw(canvas);
-            
-            canvas.restore();
+            if(!bDaytime) {
+                right = left + mMoonWidth / 2;
+                bottom = top + mMoonHeight / 2;
+                left = left - mMoonWidth / 2;
+                top = top - mMoonHeight / 2;
+                mMoonImage.setBounds((int)left, (int)top, (int)right, (int)bottom);
+                mMoonImage.draw(canvas);
+                canvas.restore();
+                
+                canvas.save();
+                canvas.drawBitmap(mDarknessImage, 0, 0 , null);
+                canvas.restore();
+            } else {
+                right = left + mSunWidth / 2;
+                bottom = top + mSunHeight / 2;
+                left = left - mSunWidth / 2;
+                top = top - mSunHeight / 2;
+                mSunImage.setBounds((int)left, (int)top, (int)right, (int)bottom);
+                mSunImage.draw(canvas);
+                canvas.restore();
+            }
             
             mDaytime += 0.01;
-            if(mDaytime > 6 ) mDaytime = 0;
+            if(mDaytime >= 24) mDaytime = 0;
             
         }
         
@@ -396,24 +410,6 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
          * Detects the end-of-game and sets the UI to the next state.
          */
         private void updatePhysics() {
-
-            // mRotating -- update heading
-            if (mRotating != 0) {
-                mHeading += mRotating * (PHYS_SLEW_SEC);
-
-                // Bring things back into the range 0..360
-                if (mHeading < 0)
-                    mHeading += 360;
-                else if (mHeading >= 360) mHeading -= 360;
-            }
-
-            // Base accelerations -- 0 for x, gravity for y
-            double ddx = 0.0;
-            double ddy = -PHYS_DOWN_ACCEL_SEC;
-
-            // figure speeds for the end of the period
-            mDX += ddx;
-            mDY += ddy;
         }
     }
     

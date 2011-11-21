@@ -3,12 +3,6 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent" 
 	android:orientation="vertical">
-	
-	<TextView
-		android:text="TextView"
-		android:id="@+id/textView1"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" />
 		
 	<com.beecub.games.planet.PlanetView
       android:id="@+id/planetview"
