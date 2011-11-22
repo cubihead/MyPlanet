@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -177,14 +178,6 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
          * @param message string to add to screen or null
          */
         public void setState(int mode, CharSequence message) {
-            /*
-             * This method optionally can cause a text message to be displayed
-             * to the user when the mode changes. Since the View that actually
-             * renders that text is part of the main View hierarchy and not
-             * owned by this thread, we can't touch the state of that View.
-             * Instead we use a Message + Handler to relay commands to the main
-             * thread, which updates the user-text View.
-             */
             synchronized (mSurfaceHolder) {
                 mMode = mode;
 
@@ -210,9 +203,6 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
                         doDraw(c);
                     }
                 } finally {
-                    // do this in a finally so that if an exception is thrown
-                    // during the above, we don't leave the Surface in an
-                    // inconsistent state
                     if (c != null) {
                         mSurfaceHolder.unlockCanvasAndPost(c);
                     }
@@ -220,14 +210,6 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
         
-        /**
-         * Used to signal the thread whether it should be running or not.
-         * Passing true allows the thread to run; passing false will shut it
-         * down if it's already running. Calling start() after this was most
-         * recently called with false will result in an immediate shutdown.
-         * 
-         * @param b true to run, false to shut down
-         */
         public void setRunning(boolean b) {
             mRun = b;
         }
@@ -461,10 +443,11 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             {
                 this.mWidth = (int)((0.8F * mCanvasWidth) / 2);
                 this.mOffsetBottom = paramInt;
-                if(left)
+                if(left) 
                     this.mOffsetLeft = (mCanvasWidth - this.mWidth);
-                else
-                    this.mOffsetLeft = 0 + (mCanvasWidth - this.mWidth);
+                else 
+                    this.mOffsetLeft = (int)(mCanvasWidth * 0.9F);
+                Log.v(Planet.LOG_TAG, "left: " + left);
             }
         }
     }
@@ -497,11 +480,6 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         setFocusable(true); // make sure we get key events
     }
 
-    /**
-     * Fetches the animation thread corresponding to this LunarView.
-     * 
-     * @return the animation thread
-     */
     public PlanetThread getThread() {
         return thread;
     }
@@ -517,31 +495,17 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         //mStatusText = textView;
     }
 
-    /* Callback invoked when the surface dimensions change. */
     public void surfaceChanged(SurfaceHolder holder, int format, int width,
             int height) {
         thread.setSurfaceSize(width, height);
     }
 
-    /*
-     * Callback invoked when the Surface has been created and is ready to be
-     * used.
-     */
     public void surfaceCreated(SurfaceHolder holder) {
-        // start the thread here so that we don't busy-wait in run()
-        // waiting for the surface to be created
         thread.setRunning(true);
         thread.start();
     }
 
-    /*
-     * Callback invoked when the Surface has been destroyed and must no longer
-     * be touched. WARNING: after this method returns, the Surface/Canvas must
-     * never be touched again!
-     */
     public void surfaceDestroyed(SurfaceHolder holder) {
-        // we have to tell thread to shut down & wait for it to finish, or else
-        // it might touch the Surface after we return and explode
         boolean retry = true;
         thread.setRunning(false);
         while (retry) {
@@ -553,57 +517,3 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 }
-
-
-
-//public class PlanetView extends View implements OnTouchListener{
-//    Bitmap bitmap;
-//    Canvas bitmapCanvas;
-//    
-//    boolean isInitialized;
-//    Paint paint = new Paint();
-//
-//    public PlanetView(Context context)
-//    {
-//      super(context);
-//      setFocusable(true);
-//      setFocusableInTouchMode(true);
-//
-//      this.setOnTouchListener(this);
-//
-//      paint.setColor(Color.WHITE);
-//      paint.setAntiAlias(true);
-//      paint.setStyle(Style.FILL_AND_STROKE);
-//     
-//      isInitialized = false;
-//    }
-//
-//    private void init()
-//    {
-//      bitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.RGB_565);
-//     
-//      bitmapCanvas = new Canvas();
-//      bitmapCanvas.setBitmap(bitmap);
-//      bitmapCanvas.drawColor(Color.BLACK);
-//     
-//      isInitialized = true;
-//
-//    }
-//   
-//    @Override
-//    public void onDraw(Canvas canvas)
-//    {
-//      if (!isInitialized)
-//        init();
-//     
-//      canvas.drawBitmap(bitmap, 0, 0, paint);
-//    }
-//
-//    public boolean onTouch(View view, MotionEvent event)
-//    {
-//      bitmapCanvas.drawCircle(event.getX(), event.getY(), 5, paint);
-//
-//     
-//      invalidate();
-//      return true;
-//    }
