@@ -8,15 +8,11 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -28,24 +24,12 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         public static final int STATE_RUNNING = 1;
         public static final int STATE_PAUSE = 2;
         
-        private static final String KEY_DX = "mDX";
-
-        private static final String KEY_DY = "mDY";
-
-        private static final String KEY_HEADING = "mHeading";
-        
         private static final String KEY_Planet_HEIGHT = "mPlanetHeight";
         private static final String KEY_Planet_WIDTH = "mPlanetWidth";
         private static final String KEY_Moon_HEIGHT = "mMoonHeight";
         private static final String KEY_Moon_WIDTH = "mMoonWidth";
         private static final String KEY_Sun_HEIGHT = "mSunHeight";
         private static final String KEY_Sun_WIDTH = "mSunWidth";
-
-        private static final String KEY_X = "mX";
-        private static final String KEY_Y = "mY";
-        
-        public static final int PHYS_DOWN_ACCEL_SEC = 35;
-        public static final int PHYS_SLEW_SEC = 120; // degrees/second rotate
         
         private int mCanvasHeight = 1;
         private int mCanvasWidth = 1;
@@ -74,6 +58,7 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         private int mSunHeight;
         private int mSunWidth;
         
+        
         private double mDaytime;
         
         private float mRotation;
@@ -83,6 +68,9 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         private boolean mRun = false;
         
         private Resources mResources;
+        
+        private Bar mHappinessBar;
+        private Bar mTestBar;
         
         
         public PlanetThread(SurfaceHolder surfaceHolder, Context context,
@@ -94,19 +82,21 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             mResources = context.getResources();
 
             // planet
-            mPlanetImage = context.getResources().getDrawable(R.drawable.planet);
+            mPlanetImage = mResources.getDrawable(R.drawable.planet);
             
             // moon
-            mMoonImage = context.getResources().getDrawable(R.drawable.moon);
+            mMoonImage = mResources.getDrawable(R.drawable.moon);
             
             // sun
-            mSunImage = context.getResources().getDrawable(R.drawable.sun);
+            mSunImage = mResources.getDrawable(R.drawable.sun);
 
             
             mBackgroundImage = BitmapFactory.decodeResource(mResources,
                     R.drawable.background_overview); 
             mDarknessImage  = BitmapFactory.decodeResource(mResources,
                     R.drawable.dark); 
+            
+            
             
         }
         
@@ -217,7 +207,6 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
                 try {
                     c = mSurfaceHolder.lockCanvas(null);
                     synchronized (mSurfaceHolder) {
-                        if (mMode == STATE_RUNNING) updatePhysics();
                         doDraw(c);
                     }
                 } finally {
@@ -260,8 +249,6 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
                 mSunWidth = mPlanetWidth / 4;
                 mSunHeight = mPlanetHeight / 4;               
                 
-
-                // don't forget to resize the background image
                 mBackgroundImage = mBackgroundImage.createScaledBitmap(
                         mBackgroundImage, width, height, true);
                 mDarknessImage = mDarknessImage.createScaledBitmap(
@@ -299,7 +286,14 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             
             drawMoonSun(canvas);
             
-            drawText(canvas);
+            mHappinessBar = new Bar(false, 66, true, mResources.getDrawable(R.drawable.face_grin));
+            mHappinessBar.setMode(0);
+            mHappinessBar.setPercent(0.7F);
+            mHappinessBar.onDraw(canvas);
+            mTestBar = new Bar(true, 43, false, mResources.getDrawable(R.drawable.face_angry));
+            mTestBar.setMode(2);
+            mTestBar.setPercent(0.2F);
+            mTestBar.onDraw(canvas);
         }
         
         private void drawBackground(Canvas canvas) {
@@ -307,30 +301,12 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             if (mBackgroundOffset > mCanvasWidth)
               this.mBackgroundOffset -= mBackgroundImage.getWidth();
             canvas.save();
-            canvas.translate(mBackgroundOffset, 0);
+            canvas.translate(mBackgroundOffset, mBackgroundOffset / 2.0F);
             canvas.drawBitmap(mBackgroundImage, 0, 0, null);
             canvas.restore();
             canvas.save();
             canvas.translate(mBackgroundOffset - mBackgroundImage.getWidth(), 0);
             canvas.drawBitmap(mBackgroundImage, 0, 0, null);
-            canvas.restore();
-        }
-        
-        private void drawText(Canvas canvas) {
-            Paint paint = new Paint();
-            int textSize = 27;
-            
-            canvas.save();
-            
-            //Typeface typeface = Typeface.createFromAsset(getContext().getAssets(), "fonts/YanoneKaffeesatz.ttf");
-            //paint.setTypeface(typeface);
-            paint.setStyle(Paint.Style.FILL);
-            paint.setColor(Color.WHITE);
-            paint.setTextSize(textSize + 10);
-            canvas.drawText(Planet.mName, 5, 5 + textSize, paint);
-            paint.setTextSize(textSize);
-            canvas.drawText(mResources.getString(R.string.population) + ": " + Planet.mPopulation, 5, 10 + textSize * 2, paint);
-            
             canvas.restore();
         }
         
@@ -404,12 +380,92 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             
         }
         
-        /**
-         * Figures the Planet state (x, y, fuel, ...) based on the passage of
-         * realtime. Does not invalidate(). Called at the start of draw().
-         * Detects the end-of-game and sets the UI to the next state.
-         */
-        private void updatePhysics() {
+        public class Bar
+        {
+            public static final int MODE_CRITICAL = 2;
+            public static final int MODE_NORMAL = 0;
+            public static final int MODE_WARNING = 1;
+            private Drawable mBackgroundImage;
+            private Drawable mDefaultBar;
+            private Drawable mCriticalBar;
+            private int mFillWidth = 0;
+            private Drawable mIconImage;
+            private boolean mIsBallance = false;
+            private Drawable mMidPoint;
+            private int mMode;
+            private int mOffsetBottom;
+            private int mOffsetLeft;
+            private Drawable mWarningBar;
+            private int mWidth = 0;
+
+            public Bar(boolean paramInt, int paramDrawable, boolean left, Drawable paramIcon)
+            {
+                this.mIsBallance = paramInt;
+                this.mIconImage = paramIcon;
+                this.mBackgroundImage = mResources.getDrawable(R.drawable.bar_back);
+                this.mDefaultBar = mResources.getDrawable(R.drawable.bar_green);
+                this.mWarningBar = mResources.getDrawable(R.drawable.bar_yellow);
+                this.mCriticalBar = mResources.getDrawable(R.drawable.bar_red);
+                this.mMidPoint = mResources.getDrawable(R.drawable.mid_mark);
+                updateOffsets(paramDrawable, left);
+            }
+
+            public void onDraw(Canvas paramCanvas)
+            {
+                int i = mCanvasHeight;
+                int j = this.mOffsetLeft;
+                this.mIconImage.setBounds(this.mOffsetLeft - this.mIconImage.getIntrinsicWidth() / 2 - 10, i - this.mOffsetBottom - this.mIconImage.getIntrinsicHeight() / 2, this.mOffsetLeft - 10, i - this.mOffsetBottom);
+                this.mIconImage.draw(paramCanvas);
+                this.mBackgroundImage.setBounds(j, i - this.mOffsetBottom - this.mBackgroundImage.getIntrinsicHeight(), j + this.mWidth, i - this.mOffsetBottom);
+                this.mBackgroundImage.draw(paramCanvas);
+                Drawable localDrawable;
+                switch (this.mMode)
+                {
+                    default:
+                        localDrawable = this.mDefaultBar;
+                        break;
+                    case 0:
+                        localDrawable = this.mDefaultBar;
+                        break;
+                    case 1:
+                        localDrawable = this.mWarningBar;
+                        break;
+                    case 2:
+                        localDrawable = this.mCriticalBar;
+                        break;
+                }
+                localDrawable.setBounds(j, i - this.mOffsetBottom - localDrawable.getIntrinsicHeight(), j + this.mFillWidth, i - this.mOffsetBottom);
+                localDrawable.draw(paramCanvas);
+                if (this.mIsBallance)
+                {
+                    int k = j + (this.mWidth / 2 - this.mMidPoint.getIntrinsicWidth() / 2);
+                    this.mMidPoint.setBounds(k, i - this.mOffsetBottom - this.mMidPoint.getIntrinsicHeight(), k + this.mMidPoint.getIntrinsicWidth(), i - this.mOffsetBottom);
+                    this.mMidPoint.draw(paramCanvas);
+                }
+            }
+
+            public void setMode(int paramInt)
+            {
+                this.mMode = paramInt;
+            }
+
+            public void setPercent(float paramFloat)
+            {
+                if (paramFloat > 1.0F)
+                    this.mFillWidth = this.mWidth;
+                else
+                    this.mFillWidth = (int)(paramFloat * this.mWidth);
+            }
+            
+            public void updateOffsets(int paramInt, boolean left)
+            {
+                this.mWidth = (int)((0.8F * mCanvasWidth) / 2);
+                this.mOffsetBottom = paramInt;
+                if(left)
+                    this.mOffsetLeft = (mCanvasWidth - this.mWidth);
+                else
+                    this.mOffsetLeft = 0 + (mCanvasWidth - this.mWidth);
+            }
         }
     }
     

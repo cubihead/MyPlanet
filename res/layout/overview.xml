@@ -1,18 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent" 
 	android:orientation="vertical">
 		
 	<com.beecub.games.planet.PlanetView
-      android:id="@+id/planetview"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"/>
+      	android:id="@+id/planetview"
+      	android:layout_width="fill_parent"
+      	android:layout_height="fill_parent"/>
+      
+	<TextView 
+		android:textSize="30px"
+	    android:textColor="#ffffffff" 
+	    android:gravity="left" 
+	    android:id="@+id/planet_name" 
+	    android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content" 
+	    android:layout_marginTop="15px" />
+    <TextView 
+		android:textSize="20px"
+	    android:textColor="#ffffffff" 
+	    android:gravity="left" 
+	    android:id="@+id/planet_resources" 
+	    android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content" 
+	    android:layout_marginTop="50px" />
+    <TextView 
+		android:textSize="20px"
+	    android:textColor="#ffffffff" 
+	    android:gravity="left" 
+	    android:id="@+id/planet_population" 
+	    android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content" 
+	    android:layout_marginTop="75px" />
 
-<!-- 	<ImageView  -->
-<!-- 		android:id="@+id/imageView1"  -->
-<!-- 		android:layout_width="wrap_content"  -->
-<!-- 		android:layout_height="wrap_content"> -->
-<!-- 	</ImageView> -->
-	
-</LinearLayout>
+</RelativeLayout>

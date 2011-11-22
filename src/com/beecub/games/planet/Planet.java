@@ -1,6 +1,8 @@
 package com.beecub.games.planet;
 
 
+import java.util.Date;
+
 import android.app.TabActivity;
 import android.beecub.games.planet.R;
 import android.content.Intent;
@@ -17,10 +19,12 @@ public class Planet extends TabActivity {
     public static final String LOG_TAG = "beecub";
     
     public static String mName = "Corn";
+    
     public static int mMood = 50;
     
     public static long mLastLogin; 
     public static long mPopulation = 0;
+    public static long mMoney = 10;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,14 +61,74 @@ public class Planet extends TabActivity {
         tabHost.setCurrentTab(0);
     }
     
-    public void initData() {
+    @Override
+    protected void onStop(){
+       super.onStop();
+       saveData();
+    }
+    
+    private void initData() {
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         
         mName = settings.getString("name", "Corn");
         
+        mMood = settings.getInt("mood", 50);
+        
         mPopulation = settings.getLong("population", mPopulation);
         mLastLogin = settings.getLong("lastlogin", 0);
+        mMoney = settings.getLong("money", 10);
                 
+    }
+    
+    private void saveData() {
+        Date currentDate = new Date();
+        
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+                
+        editor.putString("name", mName);
+        
+        editor.putInt("mood", mMood);
+        
+        editor.putLong("population", mPopulation);
+        editor.putLong("lastlogin", currentDate.getTime());
+        editor.putLong("money", mMoney);
+        
+    }
+    
+    public void saveSingleData(String name, String data) {
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+                
+        editor.putString(name, data);
+    }
+    
+    public void saveSingleData(String name, float data) {
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+                
+        editor.putFloat(name, data);   
+    }
+    
+    public void saveSingleData(String name, long data) {
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+                
+        editor.putLong(name, data);
+    }
+    
+    public void saveSingleData(String name, int data) {
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+                
+        editor.putInt(name, data);
+    }
+    
+    public void saveSingleData(String name, Boolean data) {
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+                
+        editor.putBoolean(name, data);
     }
     
 }
