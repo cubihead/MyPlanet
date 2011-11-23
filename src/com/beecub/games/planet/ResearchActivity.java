@@ -104,15 +104,19 @@ public class ResearchActivity extends Activity {
                 
                 if(tv1 != null) {
                     tv1.setText(o.getName());
+                    tv1.setTypeface(PlanetActivity.mTypeface);
                 }
                 if(tv2 != null) {
                     tv2.setText(String.valueOf(o.getDuration()));
+                    tv2.setTypeface(PlanetActivity.mTypeface);
                 }
                 if(tv3 != null) {
                     tv3.setText(String.valueOf(o.getCost()));
+                    tv3.setTypeface(PlanetActivity.mTypeface);
                 }
                 if(tv4 != null) {
                     tv4.setText(o.getDescription());
+                    tv4.setTypeface(PlanetActivity.mTypeface);
                 }
                 if(iv1 != null) {
                     iv1.setBackgroundDrawable(o.getIcon());

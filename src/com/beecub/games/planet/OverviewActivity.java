@@ -51,8 +51,11 @@ public class OverviewActivity extends Activity {
         mPlanetPopulation = (TextView) findViewById(R.id.planet_population);
         
         mPlanetName.setText(PlanetActivity.mName);
+        mPlanetName.setTypeface(PlanetActivity.mTypeface);
         mPlanetMoney.setText(this.getString(R.string.resources) + ": " + PlanetActivity.mResources + "/" + PlanetActivity.mResourcesMax);
+        mPlanetMoney.setTypeface(PlanetActivity.mTypeface);
         mPlanetPopulation.setText(this.getString(R.string.population) + ": " + PlanetActivity.mPopulation);
+        mPlanetPopulation.setTypeface(PlanetActivity.mTypeface);
         
 
         if (savedInstanceState == null) {
