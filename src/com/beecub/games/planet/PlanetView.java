@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -70,8 +69,9 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         
         private Resources mResources;
         
+        // bars
         private Bar mHappinessBar;
-        private Bar mTestBar;
+        private Bar mEnvironmentBar;
         
         
         public PlanetThread(SurfaceHolder surfaceHolder, Context context,
@@ -268,22 +268,37 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             
             drawMoonSun(canvas);
             
-            mHappinessBar = new Bar(false, 66, true, mResources.getDrawable(R.drawable.face_grin));
-            mHappinessBar.setMode(0);
-            mHappinessBar.setPercent(0.7F);
+            drawBars(canvas);
+        }
+        
+        private void drawBars(Canvas canvas) {
+            // happiness bar
+            if(PlanetActivity.mMood <= 30)
+                mHappinessBar = new Bar(false, 66, false, mResources.getDrawable(R.drawable.face_angry));
+            else if(PlanetActivity.mMood >= 70)
+                mHappinessBar = new Bar(false, 66, false, mResources.getDrawable(R.drawable.face_grin));
+            else
+                mHappinessBar = new Bar(false, 66, false, mResources.getDrawable(R.drawable.face_plain));
+            mHappinessBar.setPercent(PlanetActivity.mMood / 100.0F);
             mHappinessBar.onDraw(canvas);
-            mTestBar = new Bar(true, 43, false, mResources.getDrawable(R.drawable.face_angry));
-            mTestBar.setMode(2);
-            mTestBar.setPercent(0.2F);
-            mTestBar.onDraw(canvas);
+            
+            // environment bar
+            mEnvironmentBar = new Bar(false, 43, false, mResources.getDrawable(R.drawable.environment));
+            mEnvironmentBar.setPercent(PlanetActivity.mEnvironment / 100.0F);
+            mEnvironmentBar.onDraw(canvas);
+            
+            // ... bar
+            mEnvironmentBar = new Bar(false, 20, false, mResources.getDrawable(R.drawable.environment));
+            mEnvironmentBar.setPercent(0.2F);
+            mEnvironmentBar.onDraw(canvas);
         }
         
         private void drawBackground(Canvas canvas) {
-            mBackgroundOffset += 0.1;
-            if (mBackgroundOffset > mCanvasWidth)
-              this.mBackgroundOffset -= mBackgroundImage.getWidth();
+            mBackgroundOffset -= 0.1;
+            if (mBackgroundOffset < 0)
+              this.mBackgroundOffset += mBackgroundImage.getWidth();
             canvas.save();
-            canvas.translate(mBackgroundOffset, mBackgroundOffset / 2.0F);
+            canvas.translate(mBackgroundOffset, 0);
             canvas.drawBitmap(mBackgroundImage, 0, 0, null);
             canvas.restore();
             canvas.save();
@@ -426,28 +441,31 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
                 }
             }
 
-            public void setMode(int paramInt)
-            {
-                this.mMode = paramInt;
-            }
-
             public void setPercent(float paramFloat)
             {
-                if (paramFloat > 1.0F)
+                if(paramFloat > 1.0F)
                     this.mFillWidth = this.mWidth;
                 else
                     this.mFillWidth = (int)(paramFloat * this.mWidth);
+                
+                // set mode
+                if(paramFloat <= 0.3F)
+                    this.mMode = 2;
+                else if(paramFloat >= 0.7F)
+                    this.mMode = 0;
+                else
+                    this.mMode = 1;
+                    
             }
             
             public void updateOffsets(int paramInt, boolean left)
             {
                 this.mWidth = (int)((0.8F * mCanvasWidth) / 2);
                 this.mOffsetBottom = paramInt;
-                if(left) 
+                if(!left) 
                     this.mOffsetLeft = (mCanvasWidth - this.mWidth);
                 else 
-                    this.mOffsetLeft = (int)(mCanvasWidth * 0.9F);
-                Log.v(Planet.LOG_TAG, "left: " + left);
+                    this.mOffsetLeft = (int)(mCanvasWidth - (mCanvasWidth * 0.9F));
             }
         }
     }

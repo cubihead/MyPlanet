@@ -13,18 +13,23 @@ import android.util.Log;
 import android.view.Window;
 import android.widget.TabHost;
 
-public class Planet extends TabActivity {
+public class PlanetActivity extends TabActivity {
     
     public static final String PREFS_NAME = "PlanetPrefs";
     public static final String LOG_TAG = "beecub";
     
     public static String mName = "Corn";
     
+    public static int mLevel = 1;
     public static int mMood = 50;
+    public static int mEnvironment = 100;
+    public static int mTimeMultiplier = 0;
+    public static int mResourcePerHour = 1;
     
     public static long mLastLogin; 
     public static long mPopulation = 0;
-    public static long mMoney = 10;
+    public static long mResources = 10;
+    public static long mResourcesMax = 10;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,20 +45,20 @@ public class Planet extends TabActivity {
         TabHost.TabSpec spec;
         Intent intent;
         
-        intent = new Intent().setClass(this, Overview.class);
-        spec = tabHost.newTabSpec("artists").setIndicator(getString(R.string.overview),
+        intent = new Intent().setClass(this, OverviewActivity.class);
+        spec = tabHost.newTabSpec("overview").setIndicator(getString(R.string.overview),
                           res.getDrawable(R.drawable.ic_tab_overview))
                       .setContent(intent);
         tabHost.addTab(spec);
         
-        intent = new Intent().setClass(this, Factory.class);
-        spec = tabHost.newTabSpec("albums").setIndicator(getString(R.string.factory),
+        intent = new Intent().setClass(this, FactoryActivity.class);
+        spec = tabHost.newTabSpec("factory").setIndicator(getString(R.string.factory),
                           res.getDrawable(R.drawable.ic_tab_factory))
                       .setContent(intent);
         tabHost.addTab(spec);
         
-        intent = new Intent().setClass(this, Research.class);
-        spec = tabHost.newTabSpec("songs").setIndicator(getString(R.string.research),
+        intent = new Intent().setClass(this, ResearchActivity.class);
+        spec = tabHost.newTabSpec("research").setIndicator(getString(R.string.research),
                           res.getDrawable(R.drawable.ic_tab_research))
                       .setContent(intent);
         tabHost.addTab(spec);
@@ -72,11 +77,14 @@ public class Planet extends TabActivity {
         
         mName = settings.getString("name", "Corn");
         
+        mLevel = settings.getInt("level", 1);
         mMood = settings.getInt("mood", 50);
+        mEnvironment = settings.getInt("environment", 100);
         
-        mPopulation = settings.getLong("population", mPopulation);
+        mPopulation = settings.getLong("population", 0);
         mLastLogin = settings.getLong("lastlogin", 0);
-        mMoney = settings.getLong("money", 10);
+        mResources = settings.getLong("resources", 10);
+        mResourcesMax = settings.getLong("resourcesmax", 10);
                 
     }
     
@@ -88,11 +96,14 @@ public class Planet extends TabActivity {
                 
         editor.putString("name", mName);
         
+        editor.putInt("level", mLevel);
         editor.putInt("mood", mMood);
+        editor.putInt("environment", mEnvironment);
         
         editor.putLong("population", mPopulation);
         editor.putLong("lastlogin", currentDate.getTime());
-        editor.putLong("money", mMoney);
+        editor.putLong("resources", mResources);
+        editor.putLong("resourcesmax", mResourcesMax);
         
     }
     

@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.beecub.games.planet.PlanetView.PlanetThread;
 
 
-public class Overview extends Activity {
+public class OverviewActivity extends Activity {
 //    @Override
 //    public void onCreate(Bundle icicle) {
 //        super.onCreate(icicle);
@@ -50,9 +50,9 @@ public class Overview extends Activity {
         mPlanetMoney = (TextView) findViewById(R.id.planet_resources);
         mPlanetPopulation = (TextView) findViewById(R.id.planet_population);
         
-        mPlanetName.setText(Planet.mName);
-        mPlanetMoney.setText(this.getString(R.string.resources) + ": " + Planet.mMoney);
-        mPlanetPopulation.setText(this.getString(R.string.population) + ": " + Planet.mPopulation);
+        mPlanetName.setText(PlanetActivity.mName);
+        mPlanetMoney.setText(this.getString(R.string.resources) + ": " + PlanetActivity.mResources + "/" + PlanetActivity.mResourcesMax);
+        mPlanetPopulation.setText(this.getString(R.string.population) + ": " + PlanetActivity.mPopulation);
         
 
         if (savedInstanceState == null) {

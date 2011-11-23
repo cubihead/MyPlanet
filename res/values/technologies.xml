@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="technologies">
+		<!-- 2 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<item>Number</item>
+		<item>Name</item>
+	    <item>Description</item>
+	    <item>Level</item>
+	    <item>Duration</item>
+	    <item>Cost</item>
+	    <!-- 00 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	    <item>001</item>
+   	    <item>Fire</item>
+	    <item>Fire is an important process that affects ecological systems across the globe. The positive effects of fire include stimulating growth and maintaining various ecological systems. Fire has been used by humans for cooking, generating heat, signaling, and propulsion purposes. The negative effects of fire include water contamination, soil erosion, atmospheric pollution and hazard to human life.</item>
+	    <item>1</item>
+	    <item>60</item>
+	    <item>1</item>
+	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	    <item>002</item>
+   	    <item>Hunting</item>
+	    <item>Hunting is the practice of pursuing any living thing, usually wildlife, for food, recreation, or trade. In present-day use, the term refers to lawful hunting, as distinguished from poaching, which is the killing, trapping or capture of the hunted species contrary to applicable law.</item>
+	    <item>1</item>
+	    <item>300</item>
+	    <item>2</item>
+   	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	    <item>003</item>
+   	    <item>Agriculture</item>
+	    <item>Agriculture is the cultivation of animals, plants, fungi and other life forms for food, fiber, and other products used to sustain life. Agriculture was the key implement in the rise of sedentary human civilization, whereby farming of domesticated species created food surpluses that nurtured the development of civilization.</item>
+	    <item>1</item>
+	    <item>900</item>
+	    <item>8</item>
+    </string-array>
+</resources>
