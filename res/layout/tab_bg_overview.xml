@@ -4,9 +4,18 @@
 	android:id="@+id/tabsLayout" 
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
-	android:padding="10dip" 
+	android:paddingBottom="3dip"
+	android:paddingTop="5dip" 
 	android:gravity="center" 
-	android:orientation="vertical">
+	android:orientation="vertical"
+	android:background="@drawable/tab_bg_selector">
+	
+    <ImageView 
+	    android:id="@+id/imageOverview" 
+	    android:layout_width="wrap_content" 
+	    android:layout_height="wrap_content"
+	    android:src="@drawable/ic_tab_overview" >
+    </ImageView>
 
 	<TextView 
 		android:id="@+id/tabsText" 

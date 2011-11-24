@@ -8,7 +8,6 @@ import android.beecub.games.planet.R;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.TabHost;
-import android.widget.TabHost.TabContentFactory;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
@@ -53,16 +51,16 @@ public class PlanetActivity extends TabActivity {
         
         mTypeface = Typeface.createFromAsset(getAssets(), "fonts/WalterTurncoat.ttf");
         
-        Resources res = getResources();
         mTabHost = (TabHost) findViewById(android.R.id.tabhost);
+        mTabHost.getTabWidget().setDividerDrawable(R.drawable.tab_divider);
         
         Intent intent;        
         intent = new Intent().setClass(this, OverviewActivity.class);
-        setupTab(new TextView(this), getString(R.string.overview), intent);
+        setupTab(new TextView(this), getString(R.string.overview), intent, R.layout.tab_bg_overview);
         intent = new Intent().setClass(this, FactoryActivity.class);
-        setupTab(new TextView(this), getString(R.string.factory), intent);
+        setupTab(new TextView(this), getString(R.string.factory), intent, R.layout.tab_bg_factory);
         intent = new Intent().setClass(this, ResearchActivity.class);
-        setupTab(new TextView(this), getString(R.string.research), intent);
+        setupTab(new TextView(this), getString(R.string.research), intent, R.layout.tab_bg_research);
         
         
         //TabHost tabHost = getTabHost();
@@ -100,14 +98,14 @@ public class PlanetActivity extends TabActivity {
         mTabHost.setCurrentTab(0);
     }
     
-    private void setupTab(final View view, final String tag, Intent intent) {
-        View tabview = createTabView(mTabHost.getContext(), tag);
+    private void setupTab(final View view, final String tag, Intent intent, int tab_bg) {
+        View tabview = createTabView(mTabHost.getContext(), tag, tab_bg);
             TabSpec setContent = mTabHost.newTabSpec(tag).setIndicator(tabview).setContent(intent);
         mTabHost.addTab(setContent);
     }
 
-    private static View createTabView(final Context context, final String text) {
-        View view = LayoutInflater.from(context).inflate(R.layout.tab_bg, null);
+    private static View createTabView(final Context context, final String text, int tab_bg) {
+        View view = LayoutInflater.from(context).inflate(tab_bg, null);
         TextView tv = (TextView) view.findViewById(R.id.tabsText);
         tv.setText(text);
         tv.setTypeface(mTypeface);
