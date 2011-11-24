@@ -10,15 +10,6 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:padding="5dp">
-        				
-		<TabWidget
-            android:id="@android:id/tabs"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"/>
-            
-        <View android:layout_width="fill_parent" android:layout_height="3dip"
-			android:background="#696969" />
 
         <FrameLayout
             android:id="@android:id/tabcontent"
@@ -26,6 +17,15 @@
             android:layout_height="wrap_content"
             android:padding="5dp"
             android:layout_weight="1"/>
+            
+        <View android:layout_width="fill_parent" android:layout_height="3dip"
+			android:background="#A8A8A8" />
+            
+        <TabWidget
+            android:id="@android:id/tabs"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"/>
             
     </LinearLayout>
 
