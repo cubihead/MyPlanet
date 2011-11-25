@@ -49,7 +49,8 @@ public class PlanetActivity extends TabActivity {
         
         initData();
         
-        mTypeface = Typeface.createFromAsset(getAssets(), "fonts/WalterTurncoat.ttf");
+        mTypeface = Typeface.createFromAsset(getAssets(), "fonts/Geo-Regular.ttf");
+        //mTypeface = Typeface.createFromAsset(getAssets(), "fonts/WalterTurncoat.ttf");
         
         mTabHost = (TabHost) findViewById(android.R.id.tabhost);
         mTabHost.getTabWidget().setDividerDrawable(R.drawable.tab_divider);
@@ -129,7 +130,7 @@ public class PlanetActivity extends TabActivity {
         
         mPopulation = settings.getLong("population", 0);
         mLastLogin = settings.getLong("lastlogin", 0);
-        mResources = settings.getLong("resources", 10);
+        mResources = settings.getLong("resources", 70);
         mResourcesMax = settings.getLong("resourcesmax", 10);
                 
     }
