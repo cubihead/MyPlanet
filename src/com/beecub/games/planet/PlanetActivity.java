@@ -3,6 +3,9 @@ package com.beecub.games.planet;
 
 import java.util.Date;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.TabActivity;
 import android.beecub.games.planet.R;
 import android.content.Context;
@@ -11,12 +14,16 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class PlanetActivity extends TabActivity {
     
@@ -36,9 +43,13 @@ public class PlanetActivity extends TabActivity {
     public static long mResources = 10;
     public static long mResourcesMax = 10;
     
-    public static Typeface mTypeface;
-    
+    public static Typeface mTypeface;    
     private static TabHost mTabHost;
+    
+    private static NotificationManager mNotificationManager;
+    private static int mNotifications = 1;
+    
+    public static Context mContext;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,6 +59,11 @@ public class PlanetActivity extends TabActivity {
         Log.v(LOG_TAG, "0"); 
         
         initData();
+        
+        mContext = getApplicationContext();
+        
+        String ns = Context.NOTIFICATION_SERVICE;
+        mNotificationManager = (NotificationManager) getSystemService(ns);
         
         mTypeface = Typeface.createFromAsset(getAssets(), "fonts/Geo-Regular.ttf");
         //mTypeface = Typeface.createFromAsset(getAssets(), "fonts/WalterTurncoat.ttf");
@@ -63,40 +79,8 @@ public class PlanetActivity extends TabActivity {
         intent = new Intent().setClass(this, ResearchActivity.class);
         setupTab(new TextView(this), getString(R.string.research), intent, R.layout.tab_bg_research);
         
-        
-        //TabHost tabHost = getTabHost();
-//        TabHost.TabSpec spec;
-//        Intent intent;
-//        
-//        intent = new Intent().setClass(this, OverviewActivity.class);
-////        View view = new View(this);
-////        view.findViewById(R.layout.test);
-////        //view.setBackgroundResource(R.drawable.bar_green);
-////        TextView tv1 = new TextView(this);
-////        tv1.findViewById(R.id.textView1);
-////        tv1.setText(getString(R.string.overview));
-////        tv1.setTypeface(mTypeface, Typeface.BOLD);
-////        //tv1.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
-////        //tv1.setBackgroundResource(R.drawable.bar_green);
-//        spec = tabHost.newTabSpec("overview").setIndicator(getString(R.string.overview),
-//                          res.getDrawable(R.drawable.ic_tab_overview))
-//                      .setContent(intent);
-//        //spec = tabHost.newTabSpec("overview").setIndicator(view).setContent(intent);
-//        tabHost.addTab(spec);
-//        
-//        intent = new Intent().setClass(this, FactoryActivity.class);
-//        spec = tabHost.newTabSpec("factory").setIndicator(getString(R.string.factory),
-//                          res.getDrawable(R.drawable.ic_tab_factory))
-//                      .setContent(intent);
-//        tabHost.addTab(spec);
-//        
-//        intent = new Intent().setClass(this, ResearchActivity.class);
-//        spec = tabHost.newTabSpec("research").setIndicator(getString(R.string.research),
-//                          res.getDrawable(R.drawable.ic_tab_research))
-//                      .setContent(intent);
-//        tabHost.addTab(spec);
-        
         mTabHost.setCurrentTab(0);
+        toast("test");
     }
     
     private void setupTab(final View view, final String tag, Intent intent, int tab_bg) {
@@ -119,6 +103,41 @@ public class PlanetActivity extends TabActivity {
        saveData();
     }
     
+    public void notification(String text) {
+        int icon = R.drawable.ic_launcher;
+        long when = System.currentTimeMillis();
+
+        Notification notification = new Notification(icon, text, when);
+        
+        Context context = getApplicationContext();
+        CharSequence contentTitle = "Planet";
+        CharSequence contentText = text;
+        Intent notificationIntent = new Intent(this, PlanetActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        
+        notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        
+        mNotifications++;
+        mNotificationManager.notify(mNotifications, notification);
+    }
+    
+    public void toast(String text) {
+        LayoutInflater inflater = getLayoutInflater();
+        View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) findViewById(R.id.toast_layout_root));
+
+        ImageView image = (ImageView) layout.findViewById(R.id.toast_image);
+        image.setImageResource(R.drawable.ic_launcher);
+        TextView tv = (TextView) layout.findViewById(R.id.toast_text);
+        tv.setText(text);
+
+        Toast toast = new Toast(getApplicationContext());
+        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(layout);
+        toast.show();
+    }
+    
     private void initData() {
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         
@@ -130,7 +149,7 @@ public class PlanetActivity extends TabActivity {
         
         mPopulation = settings.getLong("population", 0);
         mLastLogin = settings.getLong("lastlogin", 0);
-        mResources = settings.getLong("resources", 70);
+        mResources = settings.getLong("resources", 10);
         mResourcesMax = settings.getLong("resourcesmax", 10);
                 
     }
@@ -188,5 +207,7 @@ public class PlanetActivity extends TabActivity {
                 
         editor.putBoolean(name, data);
     }
+    
+    
     
 }
