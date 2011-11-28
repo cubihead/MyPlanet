@@ -35,6 +35,7 @@ public class PlanetActivity extends TabActivity {
     public static int mLevel = 1;
     public static int mMood = 50;
     public static int mEnvironment = 100;
+    public static int mEnergy = 0;
     public static int mTimeMultiplier = 0;
     public static int mResourcePerHour = 1;
     

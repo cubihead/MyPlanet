@@ -72,6 +72,7 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         // bars
         private Bar mHappinessBar;
         private Bar mEnvironmentBar;
+        private Bar mEnergyBar;
         
         
         public PlanetThread(SurfaceHolder surfaceHolder, Context context,
@@ -274,22 +275,22 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         private void drawBars(Canvas canvas) {
             // happiness bar
             if(PlanetActivity.mMood <= 30)
-                mHappinessBar = new Bar(false, 66, false, mResources.getDrawable(R.drawable.face_angry));
+                mHappinessBar = new Bar(false, 66, false, mResources.getDrawable(R.drawable.icon_face_angry));
             else if(PlanetActivity.mMood >= 70)
-                mHappinessBar = new Bar(false, 66, false, mResources.getDrawable(R.drawable.face_grin));
+                mHappinessBar = new Bar(false, 66, false, mResources.getDrawable(R.drawable.icon_face_grin));
             else
-                mHappinessBar = new Bar(false, 66, false, mResources.getDrawable(R.drawable.face_plain));
+                mHappinessBar = new Bar(false, 66, false, mResources.getDrawable(R.drawable.icon_face_plain));
             mHappinessBar.setPercent(PlanetActivity.mMood / 100.0F);
             mHappinessBar.onDraw(canvas);
             
-            // environment bar
-            mEnvironmentBar = new Bar(false, 43, false, mResources.getDrawable(R.drawable.environment));
-            mEnvironmentBar.setPercent(PlanetActivity.mEnvironment / 100.0F);
-            mEnvironmentBar.onDraw(canvas);
+            // energy bar
+            mEnergyBar = new Bar(false, 43, false, mResources.getDrawable(R.drawable.icon_energy));
+            mEnergyBar.setPercent(0.2F);
+            mEnergyBar.onDraw(canvas);
             
-            // ... bar
-            mEnvironmentBar = new Bar(false, 20, false, mResources.getDrawable(R.drawable.environment));
-            mEnvironmentBar.setPercent(0.2F);
+            // environment bar
+            mEnvironmentBar = new Bar(false, 20, false, mResources.getDrawable(R.drawable.icon_environment));
+            mEnvironmentBar.setPercent(PlanetActivity.mEnvironment / 100.0F);
             mEnvironmentBar.onDraw(canvas);
         }
         

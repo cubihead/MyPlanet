@@ -10,25 +10,6 @@ import com.beecub.games.planet.PlanetView.PlanetThread;
 
 
 public class OverviewActivity extends Activity {
-//    @Override
-//    public void onCreate(Bundle icicle) {
-//        super.onCreate(icicle);
-//       
-//        Bitmap bitmapOrg = BitmapFactory.decodeResource(getResources(),
-//               R.drawable.icon);
-//       
-//        Matrix matrix = new Matrix();
-//        matrix.postRotate(45);
-//        
-//        Bitmap resizedBitmap = Bitmap.createBitmap(bitmapOrg, 0, 0,
-//                          bitmapOrg.getWidth(), bitmapOrg.getHeight(), matrix, true);
-//        
-//        BitmapDrawable bmd = new BitmapDrawable(resizedBitmap);            
-//        
-//        setContentView(R.layout.overview);
-//            ImageView iv1 = (ImageView) findViewById(R.id.imageView1);
-//            iv1.setImageDrawable(bmd);
-//    }
     
     private PlanetThread mPlanetThread;
     private PlanetView mPlanetView;
