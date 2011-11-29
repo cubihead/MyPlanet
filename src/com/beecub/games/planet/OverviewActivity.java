@@ -57,6 +57,13 @@ public class OverviewActivity extends Activity {
     }
     
     @Override
+    protected void onResume() {
+        super.onResume();
+        mPlanetView.getThread().resume();
+        mPlanetView.getThread().doStart();
+    }
+    
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mPlanetThread.saveState(outState);

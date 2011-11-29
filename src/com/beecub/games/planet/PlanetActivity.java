@@ -33,9 +33,9 @@ public class PlanetActivity extends TabActivity {
     public static String mName = "Corn";
     
     public static int mLevel = 1;
-    public static int mMood = 50;
-    public static int mEnvironment = 100;
-    public static int mEnergy = 0;
+    public static int mMood;
+    public static int mEnvironment;
+    public static int mEnergy;
     public static int mTimeMultiplier = 0;
     public static int mResourcePerHour = 1;
     
@@ -81,7 +81,13 @@ public class PlanetActivity extends TabActivity {
         setupTab(new TextView(this), getString(R.string.research), intent, R.layout.tab_bg_research);
         
         mTabHost.setCurrentTab(0);
-        toast("test");
+        //toast("test");
+    }
+    
+    @Override
+    public void onPause() {
+        super.onPause();
+        //finish();
     }
     
     private void setupTab(final View view, final String tag, Intent intent, int tab_bg) {
@@ -123,7 +129,7 @@ public class PlanetActivity extends TabActivity {
         mNotificationManager.notify(mNotifications, notification);
     }
     
-    public void toast(String text) {
+    public void doToast(String text) {
         LayoutInflater inflater = getLayoutInflater();
         View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) findViewById(R.id.toast_layout_root));
 
@@ -146,7 +152,8 @@ public class PlanetActivity extends TabActivity {
         
         mLevel = settings.getInt("level", 1);
         mMood = settings.getInt("mood", 50);
-        mEnvironment = settings.getInt("environment", 100);
+        mEnvironment = settings.getInt("environment", 50);
+        mEnergy = settings.getInt("energy", 50);
         
         mPopulation = settings.getLong("population", 0);
         mLastLogin = settings.getLong("lastlogin", 0);
@@ -166,6 +173,7 @@ public class PlanetActivity extends TabActivity {
         editor.putInt("level", mLevel);
         editor.putInt("mood", mMood);
         editor.putInt("environment", mEnvironment);
+        editor.putInt("energy", mEnergy);
         
         editor.putLong("population", mPopulation);
         editor.putLong("lastlogin", currentDate.getTime());

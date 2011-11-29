@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -44,7 +45,10 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         private Bitmap mDarknessImage;
         
         // planet
-        private Drawable mPlanetImage;        
+        private Drawable mPlanetImage;
+        private Drawable mPlanetSurface;
+        private Drawable mPlanetBorder;
+        private Drawable mPlanetPopulation;
         private int mPlanetHeight;
         private int mPlanetWidth;
         
@@ -60,6 +64,7 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         
         
         private double mDaytime;
+        private boolean bDaytime = false;
         
         private float mRotation;
         
@@ -85,6 +90,13 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
 
             // planet
             mPlanetImage = mResources.getDrawable(R.drawable.planet);
+            if(PlanetActivity.mEnvironment < 30) 
+                mPlanetSurface = mResources.getDrawable(R.drawable.planet_surface_low);
+            else if(PlanetActivity.mEnvironment >= 70)
+                mPlanetSurface = mResources.getDrawable(R.drawable.planet_surface_full);
+            else
+                mPlanetSurface = mResources.getDrawable(R.drawable.planet_surface_half);
+            mPlanetBorder = mResources.getDrawable(R.drawable.planet_border);
             
             // moon
             mMoonImage = mResources.getDrawable(R.drawable.moon);
@@ -96,16 +108,13 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             mBackgroundImage = BitmapFactory.decodeResource(mResources,
                     R.drawable.background_overview); 
             mDarknessImage  = BitmapFactory.decodeResource(mResources,
-                    R.drawable.dark); 
-            
-            
+                    R.drawable.dark);
             
         }
         
         public void doStart() {
             synchronized (mSurfaceHolder) {
-                mDaytime = 0;
-                
+                mDaytime = 0;                
                 setState(STATE_RUNNING);
             }
         }
@@ -245,6 +254,8 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
          */
         private void doDraw(Canvas canvas) {
             
+            Log.v("beecub", "doDraw");
+            
             drawBackground(canvas);            
             canvas.save();
             
@@ -257,6 +268,14 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
                     mCanvasHeight / 2 - mPlanetHeight / 2, 
                     mCanvasWidth / 2 + mPlanetWidth / 2, 
                     mCanvasHeight / 2 + mPlanetHeight / 2);
+            mPlanetSurface.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, 
+                    mCanvasHeight / 2 - mPlanetHeight / 2, 
+                    mCanvasWidth / 2 + mPlanetWidth / 2, 
+                    mCanvasHeight / 2 + mPlanetHeight / 2);
+            mPlanetBorder.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, 
+                    mCanvasHeight / 2 - mPlanetHeight / 2, 
+                    mCanvasWidth / 2 + mPlanetWidth / 2, 
+                    mCanvasHeight / 2 + mPlanetHeight / 2);
             
             canvas.rotate(mRotation, mCanvasWidth / 2, mCanvasHeight / 2);
             
@@ -264,17 +283,47 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             if(mRotation >= 360) mRotation = 0;
             
             mPlanetImage.draw(canvas);
+            mPlanetSurface.draw(canvas);
+            if(!bDaytime)
+                drawPopulation(canvas);
+            canvas.save();
+            mPlanetBorder.draw(canvas);
             
             canvas.restore();
             
             drawMoonSun(canvas);
+            if(bDaytime)
+                drawPopulation(canvas);
             
             drawBars(canvas);
         }
         
+        private void drawPopulation(Canvas canvas) {
+            canvas.save();
+            if(bDaytime) {
+                if(PlanetActivity.mPopulation < 1000)
+                    mPlanetPopulation = mResources.getDrawable(R.drawable.planet_popuatlion_1);
+                Log.v("beecub", "draw ");
+//                else if(PlanetActivity.mPopulation < 10000)
+//                    mPlanetPopulation = mResources.getDrawable(R.drawable.planet_popuatlion_2);
+                canvas.rotate(mRotation, mCanvasWidth / 2, mCanvasHeight / 2);
+            } else {
+                if(PlanetActivity.mPopulation < 1000)
+                    mPlanetPopulation = mResources.getDrawable(R.drawable.planet_popuatlion_1_night);
+//                else if(PlanetActivity.mPopulation < 10000)
+//                    mPlanetPopulation = mResources.getDrawable(R.drawable.planet_popuatlion_2);
+            }
+            mPlanetPopulation.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, 
+                    mCanvasHeight / 2 - mPlanetHeight / 2, 
+                    mCanvasWidth / 2 + mPlanetWidth / 2, 
+                    mCanvasHeight / 2 + mPlanetHeight / 2);
+            mPlanetPopulation.draw(canvas);
+            canvas.restore();
+        }
+        
         private void drawBars(Canvas canvas) {
             // happiness bar
-            if(PlanetActivity.mMood <= 30)
+            if(PlanetActivity.mMood < 30)
                 mHappinessBar = new Bar(false, 66, false, mResources.getDrawable(R.drawable.icon_face_angry));
             else if(PlanetActivity.mMood >= 70)
                 mHappinessBar = new Bar(false, 66, false, mResources.getDrawable(R.drawable.icon_face_grin));
@@ -285,7 +334,7 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             
             // energy bar
             mEnergyBar = new Bar(false, 43, false, mResources.getDrawable(R.drawable.icon_energy));
-            mEnergyBar.setPercent(0.2F);
+            mEnergyBar.setPercent(PlanetActivity.mEnergy / 100.0F);
             mEnergyBar.onDraw(canvas);
             
             // environment bar
@@ -309,12 +358,11 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         }
         
         private void drawMoonSun(Canvas canvas) {
-            boolean bDaytime = true;
             Calendar calendar = Calendar.getInstance();
             double hour = calendar.get(Calendar.HOUR_OF_DAY);
             double minutes = calendar.get(Calendar.MINUTE);
             
-            hour = 3;
+            hour = 8;
             hour = mDaytime;            
             minutes = 0;
             
@@ -476,8 +524,7 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
 
     /** Pointer to the text view to display "Paused.." etc. */
     //private TextView mStatusText;
-
-    /** The thread that actually draws the animation */
+    
     private PlanetThread thread;
     
     public PlanetView(Context context, AttributeSet attrs) {
@@ -487,7 +534,6 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         SurfaceHolder holder = getHolder();
         holder.addCallback(this);
 
-        // create thread only; it's started in surfaceCreated()
         thread = new PlanetThread(holder, context, new Handler() {
             @Override
             public void handleMessage(Message m) {
@@ -496,7 +542,7 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             }
         });
 
-        setFocusable(true); // make sure we get key events
+        setFocusable(true);
     }
 
     public PlanetThread getThread() {
@@ -520,8 +566,12 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
-        thread.setRunning(true);
-        thread.start();
+        if(thread.getState() == Thread.State.NEW) {
+            thread.setRunning(true);
+            thread.start();
+        }
+        else {
+        }
     }
 
     public void surfaceDestroyed(SurfaceHolder holder) {
