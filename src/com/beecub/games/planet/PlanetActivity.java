@@ -39,6 +39,12 @@ public class PlanetActivity extends TabActivity {
     public static int mTimeMultiplier = 0;
     public static int mResourcePerHour = 1;
     
+    // buildings / research
+    public static int mLevelCulture;
+    public static int mLevelPower;
+    public static int mLevelGreen;
+    
+    
     public static long mLastLogin; 
     public static long mPopulation = 0;
     public static long mResources = 10;
@@ -75,8 +81,8 @@ public class PlanetActivity extends TabActivity {
         Intent intent;        
         intent = new Intent().setClass(this, OverviewActivity.class);
         setupTab(new TextView(this), getString(R.string.overview), intent, R.layout.tab_bg_overview);
-        intent = new Intent().setClass(this, FactoryActivity.class);
-        setupTab(new TextView(this), getString(R.string.factory), intent, R.layout.tab_bg_factory);
+//        intent = new Intent().setClass(this, FactoryActivity.class);
+//        setupTab(new TextView(this), getString(R.string.factory), intent, R.layout.tab_bg_factory);
         intent = new Intent().setClass(this, ResearchActivity.class);
         setupTab(new TextView(this), getString(R.string.research), intent, R.layout.tab_bg_research);
         
@@ -154,6 +160,9 @@ public class PlanetActivity extends TabActivity {
         mMood = settings.getInt("mood", 50);
         mEnvironment = settings.getInt("environment", 50);
         mEnergy = settings.getInt("energy", 50);
+        mLevelCulture = settings.getInt("level_culture", 0);
+        mLevelGreen = settings.getInt("level_green", 0);
+        mLevelPower = settings.getInt("level_power", 0);
         
         mPopulation = settings.getLong("population", 0);
         mLastLogin = settings.getLong("lastlogin", 0);
@@ -174,6 +183,9 @@ public class PlanetActivity extends TabActivity {
         editor.putInt("mood", mMood);
         editor.putInt("environment", mEnvironment);
         editor.putInt("energy", mEnergy);
+        editor.putInt("level_culture", mLevelCulture);
+        editor.putInt("level_green", mLevelGreen);
+        editor.putInt("level_power", mLevelPower);
         
         editor.putLong("population", mPopulation);
         editor.putLong("lastlogin", currentDate.getTime());

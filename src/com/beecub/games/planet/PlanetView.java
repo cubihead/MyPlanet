@@ -62,6 +62,10 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         private int mSunHeight;
         private int mSunWidth;
         
+        // space platform
+        private Drawable mSpacePlatformImage;
+        private int mSpacePlatformHeight;
+        private int mSpacePlatformWidth;
         
         private double mDaytime;
         private boolean bDaytime = false;
@@ -103,12 +107,15 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             
             // sun
             mSunImage = mResources.getDrawable(R.drawable.sun);
+            
+            // space platform
+            mSpacePlatformImage = mResources.getDrawable(R.drawable.space_platform);
 
             
             mBackgroundImage = BitmapFactory.decodeResource(mResources,
                     R.drawable.background_overview); 
             mDarknessImage  = BitmapFactory.decodeResource(mResources,
-                    R.drawable.dark);
+                    R.drawable.overlay_dark);
             
         }
         
@@ -239,7 +246,10 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
                 mMoonHeight = mPlanetHeight / 4;
                 
                 mSunWidth = mPlanetWidth / 4;
-                mSunHeight = mPlanetHeight / 4;               
+                mSunHeight = mPlanetHeight / 4;
+                
+                mSpacePlatformWidth = mPlanetWidth / 5;
+                mSpacePlatformHeight = mPlanetHeight / 5;
                 
                 mBackgroundImage = mBackgroundImage.createScaledBitmap(
                         mBackgroundImage, width, height, true);
@@ -284,34 +294,50 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             
             mPlanetImage.draw(canvas);
             mPlanetSurface.draw(canvas);
-            if(!bDaytime)
+            if(bDaytime)
                 drawPopulation(canvas);
-            canvas.save();
             mPlanetBorder.draw(canvas);
             
             canvas.restore();
             
             drawMoonSun(canvas);
-            if(bDaytime)
+            if(!bDaytime)
                 drawPopulation(canvas);
             
+            drawObjects(canvas);
+            
             drawBars(canvas);
+        }
+        
+        private void drawObjects(Canvas canvas) {
+            double left = 0;
+            double right = 0;
+            double top = 0;
+            double bottom = 0;
+            
+            left = (mCanvasWidth / 10) * 2.5 - mSpacePlatformWidth / 2;
+            right = left + mSpacePlatformWidth;
+            
+            top = (mCanvasHeight / 10) * 7.5 - mSpacePlatformHeight / 2;
+            bottom = top + mSpacePlatformHeight;
+            
+            mSpacePlatformImage.setBounds((int)left, (int)top, (int)right, (int)bottom);
+            mSpacePlatformImage.draw(canvas);
         }
         
         private void drawPopulation(Canvas canvas) {
             canvas.save();
             if(bDaytime) {
                 if(PlanetActivity.mPopulation < 1000)
-                    mPlanetPopulation = mResources.getDrawable(R.drawable.planet_popuatlion_1);
-                Log.v("beecub", "draw ");
-//                else if(PlanetActivity.mPopulation < 10000)
-//                    mPlanetPopulation = mResources.getDrawable(R.drawable.planet_popuatlion_2);
-                canvas.rotate(mRotation, mCanvasWidth / 2, mCanvasHeight / 2);
+                    mPlanetPopulation = mResources.getDrawable(R.drawable.planet_popuatlion_2);
+                else if(PlanetActivity.mPopulation < 10000)
+                    mPlanetPopulation = mResources.getDrawable(R.drawable.planet_popuatlion_2);
             } else {
                 if(PlanetActivity.mPopulation < 1000)
-                    mPlanetPopulation = mResources.getDrawable(R.drawable.planet_popuatlion_1_night);
-//                else if(PlanetActivity.mPopulation < 10000)
-//                    mPlanetPopulation = mResources.getDrawable(R.drawable.planet_popuatlion_2);
+                    mPlanetPopulation = mResources.getDrawable(R.drawable.planet_popuatlion_2_night);
+                else if(PlanetActivity.mPopulation < 10000)
+                    mPlanetPopulation = mResources.getDrawable(R.drawable.planet_popuatlion_2_night);
+                canvas.rotate(mRotation, mCanvasWidth / 2, mCanvasHeight / 2);
             }
             mPlanetPopulation.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, 
                     mCanvasHeight / 2 - mPlanetHeight / 2, 
@@ -408,17 +434,15 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
                 mMoonImage.draw(canvas);
                 canvas.restore();
                 
-                canvas.save();
                 canvas.drawBitmap(mDarknessImage, 0, 0 , null);
-                canvas.restore();
             } else {
+                canvas.restore();
                 right = left + mSunWidth / 2;
                 bottom = top + mSunHeight / 2;
                 left = left - mSunWidth / 2;
                 top = top - mSunHeight / 2;
                 mSunImage.setBounds((int)left, (int)top, (int)right, (int)bottom);
                 mSunImage.draw(canvas);
-                canvas.restore();
             }
             
             mDaytime += 0.01;
