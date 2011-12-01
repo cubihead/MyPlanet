@@ -10,19 +10,24 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class SubTasksActivity extends Activity {
-    public ArrayList<Task> mTechnologies = new ArrayList<Task>();
+public class TasksActivity extends Activity {
+    
+    public ArrayList<Task> mTasks = new ArrayList<Task>();
     public ListViewAdapter madapter;
     private int currentPosition;
+    private float oldTouchValue;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,14 +35,56 @@ public class SubTasksActivity extends Activity {
         setContentView(R.layout.task);
     }
     
+    @Override
+    public boolean onTouchEvent(MotionEvent touchevent) {
+        Log.v("beecub", "onTouchEvent");
+        Log.v("beecub", String.valueOf(touchevent.getAction()));
+        switch (touchevent.getAction())
+        {
+            case MotionEvent.ACTION_DOWN:
+                Log.v("beecub", "down");
+                oldTouchValue = touchevent.getX();
+                break;
+            case MotionEvent.ACTION_UP:
+                Log.v("beecub", "up");
+                float currentX = touchevent.getX();
+                if (oldTouchValue < currentX)
+                {
+                }
+                if (oldTouchValue > currentX)
+                {
+                }
+                break;
+            case MotionEvent.ACTION_MOVE : // Contact has moved across screen
+                Log.v("beecub", "move");
+            case MotionEvent.ACTION_CANCEL : // Touch event cancelled
+                 Log.v("beecub", "cancel");
+        }
+        return false;
+    }
+    
     public void onResume() {
         super.onResume();
         
-        mTechnologies = new ArrayList<Task>();
-        this.madapter = new ListViewAdapter(this, R.layout.row, mTechnologies);
+        ImageButton b0 = (ImageButton) findViewById(R.id.Button0);
+        ImageButton b1 = (ImageButton) findViewById(R.id.Button1);
+        ImageButton b2 = (ImageButton) findViewById(R.id.Button2);
+        ImageButton b3 = (ImageButton) findViewById(R.id.Button3);
+        
+        b0.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+                Log.v("beecub", "onclick0");
+            }
+        });
+        
+        
+        mTasks = new ArrayList<Task>();
+        this.madapter = new ListViewAdapter(this, R.layout.row, mTasks);
         //madapter.notifyDataSetChanged();
         
-        ListView lv = (ListView) findViewById(R.id.researchlist);
+        ListView lv = (ListView) findViewById(R.id.list_task);
         lv.setAdapter(madapter);
         lv.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
@@ -53,7 +100,7 @@ public class SubTasksActivity extends Activity {
 //                    startActivity(intent);
                 
                 currentPosition = position;
-                finish();
+                //finish();
                 
             }
         });
@@ -70,10 +117,9 @@ public class SubTasksActivity extends Activity {
                 icon = res.getDrawable(R.drawable.icon);
             else
                 icon = res.getDrawable(resID);
-            Log.v("beecub", i + " : " + technologies.length);
             madapter.add(new Task(Integer.valueOf(technologies[i]), technologies[i+1], technologies[i+2], Integer.valueOf(technologies[i+3]), Long.valueOf(technologies[i+4]), Long.valueOf(technologies[i+5]), icon));
             i = i + 6;
-        } 
+        }
     }
     
     public class ListViewAdapter extends ArrayAdapter<Task> {

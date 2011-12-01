@@ -83,7 +83,7 @@ public class PlanetActivity extends TabActivity {
         setupTab(new TextView(this), getString(R.string.overview), intent, R.layout.tab_bg_overview);
 //        intent = new Intent().setClass(this, FactoryActivity.class);
 //        setupTab(new TextView(this), getString(R.string.factory), intent, R.layout.tab_bg_factory);
-        intent = new Intent().setClass(this, ResearchActivity.class);
+        intent = new Intent().setClass(this, TasksActivity.class);
         setupTab(new TextView(this), getString(R.string.research), intent, R.layout.tab_bg_research);
         
         mTabHost.setCurrentTab(0);

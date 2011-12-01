@@ -264,8 +264,6 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
          */
         private void doDraw(Canvas canvas) {
             
-            Log.v("beecub", "doDraw");
-            
             drawBackground(canvas);            
             canvas.save();
             
