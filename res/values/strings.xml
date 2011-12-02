@@ -6,5 +6,8 @@
     <string name="research">Research</string>
     <string name="population">Population</string>
     <string name="resources">Resources</string>
+    <string name="mood">Mood</string>
+    <string name="energy">Energy</string>
     <string name="environment">Environment</string>
+    <string name="perhour">/h</string>
 </resources>

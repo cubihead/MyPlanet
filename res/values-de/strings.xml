@@ -6,5 +6,8 @@
     <string name="research">Forschung</string>
     <string name="population">Einwohner</string>
     <string name="resources">Rohstoffe</string>
+    <string name="mood">Laune</string>
+    <string name="energy">Energie</string>
     <string name="environment">Umwelt</string>
+    <string name="perhour">/Std</string>
 </resources>

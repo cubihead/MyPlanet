@@ -34,8 +34,7 @@
 	            android:ellipsize="marquee"
 	            android:textAppearance="?android:attr/textAppearanceMedium"
 	            android:textStyle="bold"
-	            android:text="Name"
-	            android:textColor="@color/blue" />
+	            android:text="Name" />
         		
         </LinearLayout>
 
@@ -45,7 +44,7 @@
             android:orientation="horizontal" >
 
             <TextView
-                android:id="@+id/duration"
+                android:id="@+id/amount"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
@@ -53,7 +52,7 @@
                 android:singleLine="false"
                 android:maxLines="3"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Duration" />
+                android:text="Amount" />
 
 			<TextView
 	            android:id="@+id/cost"
@@ -68,34 +67,136 @@
 	            
         </LinearLayout>
 
-	<LinearLayout
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal" >
-		
-		<ImageView
-			android:id="@+id/rowicon" 
-			android:src="@drawable/icon" 
-			android:layout_width="wrap_content" 
-			android:layout_height="wrap_content">
-		</ImageView>
-
-		<TextView
-			android:id="@+id/description"
-			android:layout_width="wrap_content"
+		<LinearLayout
+			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:gravity="top"
-			android:paddingTop="5dip"
-			android:paddingRight="5dip"
-			android:paddingLeft="8dip"
-			android:singleLine="false"
-			android:layout_marginTop="1dip"
-			android:maxLines="4"
-			android:ellipsize="end"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:text="Fire is an important process that affects ecological systems across the globe. The positive effects of fire include stimulating growth and maintaining various ecological systems. Fire has been used by humans for cooking, generating heat, signaling, and propulsion purposes. The negative effects of fire include water contamination, soil erosion, atmospheric pollution and hazard to human life." />
-
-	</LinearLayout>
+			android:orientation="horizontal" >
+			
+			<ImageView
+				android:id="@+id/rowicon" 
+				android:src="@drawable/icon" 
+				android:layout_width="100px"
+				android:layout_height="100px">
+			</ImageView>
+	
+			<LinearLayout
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical" 
+	            android:layout_gravity="center">
+	
+				<LinearLayout
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal" >
+		            
+					<ImageView
+						android:id="@+id/resourceImage"
+						android:src="@drawable/icon_resource" 
+						android:layout_width="16dip"
+						android:layout_height="16dip"
+						android:layout_marginLeft="8dip"
+						android:layout_gravity="center" />
+	
+		            <TextView
+		                android:id="@+id/resource"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:paddingLeft="2dip"
+		                android:singleLine="true"
+		                android:layout_gravity="center"
+		                android:textAppearance="?android:attr/textAppearanceSmall"
+		                android:text="Resource" />
+	                
+				</LinearLayout>
+	
+				<LinearLayout
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal" >
+		            
+					<ImageView
+						android:id="@+id/resourceMood"
+						android:src="@drawable/icon_face_grin" 
+						android:layout_width="16dip"
+						android:layout_height="16dip"
+						android:layout_marginLeft="8dip"
+						android:layout_gravity="center" />
+							
+					<TextView
+			            android:id="@+id/mood"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:gravity="right|bottom"
+			            android:paddingLeft="2dip"
+			            android:singleLine="true"
+			            android:layout_gravity="center"
+			            android:textAppearance="?android:attr/textAppearanceSmall"
+			            android:text="Mood" />
+		            
+				</LinearLayout>
+		            
+	        </LinearLayout>
+	
+			<LinearLayout
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:layout_gravity="center">
+	            
+	            <LinearLayout
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal" >
+		            
+					<ImageView
+						android:id="@+id/resourceEnergy"
+						android:src="@drawable/icon_energy" 
+						android:layout_width="16dip"
+						android:layout_height="16dip"
+						android:layout_marginLeft="8dip"
+						android:layout_gravity="center" />
+		            
+		            <TextView
+			            android:id="@+id/energy"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:gravity="right|bottom"
+			            android:paddingLeft="8dip"
+			            android:singleLine="true"
+			            android:textAppearance="?android:attr/textAppearanceSmall"
+			            android:text="Energy" />
+			            
+	            </LinearLayout>
+		        
+		        <LinearLayout
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal" >
+		            
+					<ImageView
+						android:id="@+id/resourceEnvironment"
+						android:src="@drawable/icon_environment" 
+						android:layout_width="16dip"
+						android:layout_height="16dip"
+						android:layout_marginLeft="8dip"
+						android:layout_gravity="center" />
+						
+		            <TextView
+			            android:id="@+id/environment"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:gravity="right|bottom"
+			            android:paddingLeft="8dip"
+			            android:singleLine="true"
+			            android:textAppearance="?android:attr/textAppearanceSmall"
+			            android:text="Environment" />
+			            
+	            </LinearLayout>
+		            
+	        </LinearLayout>
+	
+		</LinearLayout>
 
     </LinearLayout>
 

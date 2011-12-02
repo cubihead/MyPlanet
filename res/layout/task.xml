@@ -9,13 +9,14 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" 
     android:layout_gravity="center"
-    android:paddingTop="5px">  
+    android:paddingTop="5px"
+    android:paddingBottom="10px">  
     
     	<ImageButton 
 	    	android:id="@+id/Button0" 
 	    	android:layout_width="wrap_content" 
 	    	android:layout_height="wrap_content"
-	    	android:src="@drawable/icon_face_grin"
+	    	android:src="@drawable/icon_resource"
 	    	android:background="@drawable/button_background">
 	   	</ImageButton>
     
@@ -50,7 +51,7 @@
 		android:layout_width="fill_parent"
 		android:id="@+id/list_task"
 		android:clickable="true"
-		android:dividerHeight="2dp">
+		android:divider="#000000">
 	</ListView>
     
 </LinearLayout>
