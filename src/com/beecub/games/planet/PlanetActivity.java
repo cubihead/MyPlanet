@@ -22,6 +22,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
@@ -38,29 +40,34 @@ public class PlanetActivity extends TabActivity {
     public static int mLevel = 1;
     public static int mMood;
     public static int mEnvironment;
-    public static int mEnergy;
+    public static int mFaith;
     public static int mTimeMultiplier = 0;
     public static int mResourcePerHour = 1;
     
     public static long mLastLogin; 
     public static long mPopulation = 0;
     public static long mMana = 10;
-    public static long mManaMax = 10;
+    
+    public static int mPower;
+    public static long mPowerStartTime;
     
     public static Typeface mTypeface;    
-    private static TabHost mTabHost;
+    static TabHost mTabHost;
     
     private static NotificationManager mNotificationManager;
     private static int mNotifications = 1;
     
     public static Context mContext;
     
+    public static int mCurrentPosition;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.main);
-        Log.v(LOG_TAG, "0"); 
+        
+        Log.v(LOG_TAG, "0");
         
         initData();
         
@@ -82,9 +89,19 @@ public class PlanetActivity extends TabActivity {
 //        setupTab(new TextView(this), getString(R.string.factory), intent, R.layout.tab_bg_factory);
         intent = new Intent().setClass(this, PowersActivity.class);
         setupTab(new TextView(this), getString(R.string.powers), intent, R.layout.tab_bg_powers);
-        
+        Animation a = AnimationUtils.loadAnimation(mContext, R.anim.in_animation1);
+        mTabHost.setAnimation(a);
         mTabHost.setCurrentTab(0);
-        //toast("test");
+
+        //doToast("test");
+        
+//        mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
+//            public void onTabChanged(String tabId) {
+//                Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.in_animation);
+//                LinearLayout layout = (LinearLayout) findViewById(R.layout.tab_bg_overview);
+//                layout.setAnimation(animation);
+//            }
+//        });
     }
     
     @Override
@@ -175,13 +192,16 @@ public class PlanetActivity extends TabActivity {
         mLevel = settings.getInt("level", 1);
         mMood = settings.getInt("mood", 50);
         mEnvironment = settings.getInt("environment", 50);
-        mEnergy = settings.getInt("energy", 50);
+        mFaith = settings.getInt("faith", 50);
+        mPower = settings.getInt("power", 0);
         
         mPopulation = settings.getLong("population", 0);
         mLastLogin = settings.getLong("lastlogin", 0);
         mMana = settings.getLong("resources", 10);
-        mManaMax = settings.getLong("resourcesmax", 10);
-                
+        mPowerStartTime = settings.getLong("powertime", 0);
+        
+//        mPower = 1;
+//        mPowerStartTime = new Date().getTime();                
     }
     
     private void saveData() {
@@ -195,13 +215,13 @@ public class PlanetActivity extends TabActivity {
         editor.putInt("level", mLevel);
         editor.putInt("mood", mMood);
         editor.putInt("environment", mEnvironment);
-        editor.putInt("energy", mEnergy);
+        editor.putInt("faith", mFaith);
+        editor.putInt("power", mPower);
         
         editor.putLong("population", mPopulation);
         editor.putLong("lastlogin", currentDate.getTime());
         editor.putLong("resources", mMana);
-        editor.putLong("resourcesmax", mManaMax);
-        
+        editor.putLong("powertime", mPowerStartTime);
     }
     
     public void saveSingleData(String name, String data) {

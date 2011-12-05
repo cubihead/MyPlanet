@@ -1,6 +1,7 @@
 package com.beecub.games.planet;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import android.beecub.games.planet.R;
 import android.content.Context;
@@ -66,6 +67,12 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         private int mSpacePlatformHeight;
         private int mSpacePlatformWidth;
         
+        // planet deluge
+        private Drawable mPlanetDeluge1;
+        private Drawable mPlanetDeluge2;
+        private Drawable mPlanetDeluge3;
+        private Drawable mPlanetDeluge4;
+        
         private double mDaytime;
         private boolean bDaytime = false;
         
@@ -80,7 +87,7 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         // bars
         private Bar mHappinessBar;
         private Bar mEnvironmentBar;
-        private Bar mEnergyBar;
+        private Bar mFaithBar;
         
         
         public PlanetThread(SurfaceHolder surfaceHolder, Context context,
@@ -106,6 +113,12 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             
             // sun
             mSunImage = mResources.getDrawable(R.drawable.sun);
+            
+            // planet deluge
+            mPlanetDeluge1 = mResources.getDrawable(R.drawable.planet_deluge_1);
+            mPlanetDeluge2 = mResources.getDrawable(R.drawable.planet_deluge_2);
+            mPlanetDeluge3 = mResources.getDrawable(R.drawable.planet_deluge_3);
+            mPlanetDeluge4 = mResources.getDrawable(R.drawable.planet_deluge_4);
             
             // space platform
             mSpacePlatformImage = mResources.getDrawable(R.drawable.space_platform);
@@ -293,7 +306,6 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             mPlanetSurface.draw(canvas);
             if(bDaytime)
                 drawPopulation(canvas);
-            mPlanetBorder.draw(canvas);
             
             canvas.restore();
             
@@ -303,7 +315,39 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             
             drawObjects(canvas);
             
+            drawPower(canvas);
+            
+            mPlanetBorder.draw(canvas);
+            
             drawBars(canvas);
+        }
+        
+        private void drawPower(Canvas canvas) {
+            long time = new Date().getTime();
+            canvas.save();
+            
+            if(PlanetActivity.mPower == 1) {
+                canvas.rotate(mRotation, mCanvasWidth / 2, mCanvasHeight / 2);
+                time = time - PlanetActivity.mPowerStartTime;
+                time = time / (1000 * 60);
+                
+                mPlanetDeluge1.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, mCanvasHeight / 2 - mPlanetHeight / 2, mCanvasWidth / 2 + mPlanetWidth / 2, mCanvasHeight / 2 + mPlanetHeight / 2);
+                mPlanetDeluge1.draw(canvas);
+                if(time > 60) {
+                    mPlanetDeluge2.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, mCanvasHeight / 2 - mPlanetHeight / 2, mCanvasWidth / 2 + mPlanetWidth / 2, mCanvasHeight / 2 + mPlanetHeight / 2);
+                    mPlanetDeluge2.draw(canvas);
+                }
+                if(time > 120) {
+                    mPlanetDeluge3.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, mCanvasHeight / 2 - mPlanetHeight / 2, mCanvasWidth / 2 + mPlanetWidth / 2, mCanvasHeight / 2 + mPlanetHeight / 2);
+                    mPlanetDeluge3.draw(canvas);
+                }
+                if(time > 180) {
+                    mPlanetDeluge4.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, mCanvasHeight / 2 - mPlanetHeight / 2, mCanvasWidth / 2 + mPlanetWidth / 2, mCanvasHeight / 2 + mPlanetHeight / 2);
+                    mPlanetDeluge4.draw(canvas);
+                }
+            }
+            
+            canvas.restore();
         }
         
         private void drawObjects(Canvas canvas) {
@@ -355,10 +399,10 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             mHappinessBar.setPercent(PlanetActivity.mMood / 100.0F);
             mHappinessBar.onDraw(canvas);
             
-            // energy bar
-            mEnergyBar = new Bar(false, 43, false, mResources.getDrawable(R.drawable.icon_energy));
-            mEnergyBar.setPercent(PlanetActivity.mEnergy / 100.0F);
-            mEnergyBar.onDraw(canvas);
+            // faith bar
+            mFaithBar = new Bar(false, 43, false, mResources.getDrawable(R.drawable.icon_faith));
+            mFaithBar.setPercent(PlanetActivity.mFaith / 100.0F);
+            mFaithBar.onDraw(canvas);
             
             // environment bar
             mEnvironmentBar = new Bar(false, 20, false, mResources.getDrawable(R.drawable.icon_environment));

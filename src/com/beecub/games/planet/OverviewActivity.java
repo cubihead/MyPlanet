@@ -27,18 +27,6 @@ public class OverviewActivity extends Activity {
         mPlanetView = (PlanetView) findViewById(R.id.planetview);
         mPlanetThread = mPlanetView.getThread();
         
-        mPlanetName = (TextView) findViewById(R.id.planet_name);
-        mPlanetMoney = (TextView) findViewById(R.id.planet_resources);
-        mPlanetPopulation = (TextView) findViewById(R.id.planet_population);
-        
-        mPlanetName.setText(PlanetActivity.mName);
-        mPlanetName.setTypeface(PlanetActivity.mTypeface);
-        mPlanetMoney.setText(this.getString(R.string.mana) + ": " + PlanetActivity.mMana + "/" + PlanetActivity.mManaMax);
-        mPlanetMoney.setTypeface(PlanetActivity.mTypeface);
-        mPlanetPopulation.setText(this.getString(R.string.population) + ": " + PlanetActivity.mPopulation);
-        mPlanetPopulation.setTypeface(PlanetActivity.mTypeface);
-        
-
         if (savedInstanceState == null) {
             mPlanetThread.setState(PlanetThread.STATE_RUNNING);
             Log.w(this.getClass().getName(), "SIS is null");
@@ -61,6 +49,17 @@ public class OverviewActivity extends Activity {
         super.onResume();
         mPlanetView.getThread().resume();
         mPlanetView.getThread().doStart();
+        
+        mPlanetName = (TextView) findViewById(R.id.planet_name);
+        mPlanetMoney = (TextView) findViewById(R.id.planet_resources);
+        mPlanetPopulation = (TextView) findViewById(R.id.planet_population);
+        
+        mPlanetName.setText(PlanetActivity.mName);
+        mPlanetName.setTypeface(PlanetActivity.mTypeface);
+        mPlanetMoney.setText(this.getString(R.string.mana) + ": " + PlanetActivity.mMana + "/100");
+        mPlanetMoney.setTypeface(PlanetActivity.mTypeface);
+        mPlanetPopulation.setText(this.getString(R.string.population) + ": " + PlanetActivity.mPopulation);
+        mPlanetPopulation.setTypeface(PlanetActivity.mTypeface);
     }
     
     @Override

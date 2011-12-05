@@ -22,9 +22,8 @@ import android.widget.TextView;
 
 public class PowersActivity extends Activity {
     
-    public ArrayList<Task> mTasks = new ArrayList<Task>();
+    public ArrayList<Task> mpowers = new ArrayList<Task>();
     public ListViewAdapter mAdapter;
-    private int currentPosition;
     private float oldTouchValue;
 
     @Override
@@ -64,8 +63,8 @@ public class PowersActivity extends Activity {
     public void onResume() {
         super.onResume();
         
-        mTasks = new ArrayList<Task>();
-        this.mAdapter = new ListViewAdapter(this, R.layout.row, mTasks);
+        mpowers = new ArrayList<Task>();
+        this.mAdapter = new ListViewAdapter(this, R.layout.row, mpowers);
         //mAdapter.notifyDataSetChanged();
         
         ListView lv = (ListView) findViewById(R.id.list_task);
@@ -73,29 +72,37 @@ public class PowersActivity extends Activity {
         lv.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
                 
-                currentPosition = position;
-                //finish();
+                PlanetActivity.mCurrentPosition = position;
                 
+                if(position == 1) {
+                    
+                }
+                else if(position == 2) {
+                    
+                }
+                
+                PlanetActivity.mTabHost.setCurrentTab(0);
             }
         });
-        lv.setSelection(currentPosition);
+        lv.setSelection(PlanetActivity.mCurrentPosition);
         
         Resources res = getResources();
-        String[] tasks = res.getStringArray(R.array.powers);
+        String[] powers = res.getStringArray(R.array.powers);
         mAdapter.clear();
         
         int i = 0;
-        while(i < tasks.length) {
-            int resID = getResources().getIdentifier("task_resource_" + tasks[i], "drawable", getPackageName());
+        while(i < powers.length) {
+            int resID = getResources().getIdentifier("power_" + powers[i+4], "drawable", getPackageName());
             Drawable icon;
             if(resID == 0) 
                 icon = res.getDrawable(R.drawable.icon);
             else
                 icon = res.getDrawable(resID);
             
-            mAdapter.add(new Task(Integer.valueOf(tasks[i]), tasks[i+1], tasks[i+2], Long.valueOf(tasks[i+3]), icon));
-            i+=4;
+            mAdapter.add(new Task(Integer.valueOf(powers[i]), powers[i+1], powers[i+2], Long.valueOf(powers[i+3]), icon, Integer.valueOf(powers[i+5]), Integer.valueOf(powers[i+6]), Integer.valueOf(powers[i+7]), Integer.valueOf(powers[i+8]), Integer.valueOf(powers[i+9])));
+            i+=10;
         }
+        lv.setSelection(PlanetActivity.mCurrentPosition);
     }
     
     public class ListViewAdapter extends ArrayAdapter<Task> {
@@ -117,8 +124,14 @@ public class PowersActivity extends Activity {
             if (o != null) {
                 TextView tv1 = (TextView) v.findViewById(R.id.name);
                 TextView tv2 = (TextView) v.findViewById(R.id.cost);
-                TextView tv3 = (TextView) v.findViewById(R.id.description);
+                //TextView tv3 = (TextView) v.findViewById(R.id.description);
                 ImageView iv1 = (ImageView) v.findViewById(R.id.rowicon);
+                
+                ImageView ivi1 = (ImageView) v.findViewById(R.id.impactPopulationImage);
+                ImageView ivi2 = (ImageView) v.findViewById(R.id.impactMoodImage);
+                ImageView ivi3 = (ImageView) v.findViewById(R.id.impactFaithImage);
+                ImageView ivi4 = (ImageView) v.findViewById(R.id.impactEnvironmentImage);
+                ImageView ivi5 = (ImageView) v.findViewById(R.id.impactManaImage);
                 
                 if(tv1 != null) {
                     tv1.setText(o.getName());
@@ -128,13 +141,39 @@ public class PowersActivity extends Activity {
                     tv2.setText(String.valueOf(o.getCost()));
                     tv2.setTypeface(PlanetActivity.mTypeface);
                 }
-                if(tv3 != null) {
-                    tv3.setText(o.getDescription());
-                    tv3.setTypeface(PlanetActivity.mTypeface);
-                }
+//                if(tv3 != null) {
+//                    tv3.setText(o.getDescription());
+//                    tv3.setTypeface(PlanetActivity.mTypeface);
+//                }
                 if(iv1 != null) {
                     iv1.setBackgroundDrawable(o.getIcon());
-                    iv1.setImageDrawable(this.getContext().getResources().getDrawable(R.drawable.research_border));
+                    iv1.setImageDrawable(this.getContext().getResources().getDrawable(R.drawable.powers_border));
+                }
+                
+                if(ivi1 != null) {
+                    int resID = getResources().getIdentifier("impact_" + o.getImpactPopulation(), "drawable", getPackageName());
+                    Drawable icon = getResources().getDrawable(resID);
+                    ivi1.setImageDrawable(icon);
+                }
+                if(ivi2 != null) {
+                    int resID = getResources().getIdentifier("impact_" + o.getImpactMood(), "drawable", getPackageName());
+                    Drawable icon = getResources().getDrawable(resID);
+                    ivi2.setImageDrawable(icon);
+                }
+                if(ivi3 != null) {
+                    int resID = getResources().getIdentifier("impact_" + o.getImpactFaith(), "drawable", getPackageName());
+                    Drawable icon = getResources().getDrawable(resID);
+                    ivi3.setImageDrawable(icon);
+                }
+                if(ivi4 != null) {
+                    int resID = getResources().getIdentifier("impact_" + o.getImpactEnvironment(), "drawable", getPackageName());
+                    Drawable icon = getResources().getDrawable(resID);
+                    ivi4.setImageDrawable(icon);
+                }
+                if(ivi5 != null) {
+                    int resID = getResources().getIdentifier("impact_" + o.getImpactMana(), "drawable", getPackageName());
+                    Drawable icon = getResources().getDrawable(resID);
+                    ivi5.setImageDrawable(icon);
                 }
             }
             return v;
@@ -146,14 +185,24 @@ public class PowersActivity extends Activity {
         private String mName;
         private String mDescription;
         private long mCost;
+        private int mImpactPopulation;
+        private int mImpactMood;
+        private int mImpactFaith;
+        private int mImpactEnvironment;
+        private int mImpactMana;
         private Drawable mIcon;
         
-        public Task(int number, String name, String description, long cost, Drawable image) {
+        public Task(int number, String name, String description, long cost, Drawable image, int impactPopulation, int impactMood, int impactFaith, int impactEnvironment, int impactMana) {
             this.mNumber = number;
             this.mName = name;
             this.mDescription = description;
             this.mCost = cost;
             this.mIcon = image;
+            this.mImpactPopulation = impactPopulation;
+            this.mImpactMood = impactMood;
+            this.mImpactFaith = impactFaith;
+            this.mImpactEnvironment = impactEnvironment;
+            this.mImpactMana = impactMana;
         }
         
         public int getNumber() {
@@ -170,6 +219,21 @@ public class PowersActivity extends Activity {
         }
         public Drawable getIcon() {
             return this.mIcon;
+        }
+        public int getImpactPopulation() {
+            return this.mImpactPopulation;
+        }
+        public int getImpactMood() {
+            return this.mImpactMood;
+        }
+        public int getImpactFaith() {
+            return this.mImpactFaith;
+        }
+        public int getImpactEnvironment() {
+            return this.mImpactEnvironment;
+        }
+        public int getImpactMana() {
+            return this.mImpactMana;
         }
     }
 }

@@ -28,27 +28,26 @@
 	            android:layout_weight="1"
 	            android:layout_marginRight="1dip"
 	            android:layout_marginTop="10dip"
-	            android:layout_marginBottom="1dip"
 	            android:gravity="center_vertical"
 	            android:singleLine="true"
 	            android:ellipsize="marquee"
 	            android:textAppearance="?android:attr/textAppearanceMedium"
 	            android:textStyle="bold"
 	            android:text="Name" />
+	            
+	      	<TextView
+	            android:id="@+id/cost"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:paddingRight="5dip"
+	            android:paddingLeft="5dip"
+	            android:singleLine="true"
+	            android:textAppearance="?android:attr/textAppearanceSmall"
+	            android:text="Costs" 
+	            android:layout_gravity="right|bottom" 
+	            android:gravity="right|bottom"/>
         		
         </LinearLayout>
-
-		<TextView
-            android:id="@+id/cost"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingRight="5dip"
-            android:paddingLeft="5dip"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Costs" 
-            android:layout_gravity="right" 
-            android:gravity="right"/>
 
 		<LinearLayout
 			android:layout_width="fill_parent"
@@ -58,19 +57,148 @@
 			<ImageView
 				android:id="@+id/rowicon" 
 				android:src="@drawable/icon" 
-				android:layout_width="100px"
-				android:layout_height="100px">
+				android:layout_width="100dip"
+				android:layout_height="100dip">
 			</ImageView>
+			
+			<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical" >
 
-			<TextView
-	            android:id="@+id/description"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:paddingRight="5dip"
-	            android:paddingLeft="5dip"
-	            android:singleLine="false"
-	            android:textAppearance="?android:attr/textAppearanceSmall"
-	            android:text="Description" />
+				<LinearLayout
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal" >
+					
+					<TextView
+			            android:id="@+id/impactPopulationText"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:paddingRight="5dip"
+			            android:paddingLeft="5dip"
+			            android:singleLine="true"
+			            android:textAppearance="?android:attr/textAppearanceSmall"
+			            android:text="@string/population" />
+					
+					<ImageView
+						android:id="@+id/impactPopulationImage" 
+						android:src="@drawable/impact_4" 
+						android:layout_width="100dip"
+						android:layout_height="20dip">
+					</ImageView>
+				
+				</LinearLayout>
+				
+				<LinearLayout
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal" >
+					
+					<TextView
+			            android:id="@+id/impactMoodText"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:paddingRight="5dip"
+			            android:paddingLeft="5dip"
+			            android:singleLine="true"
+			            android:textAppearance="?android:attr/textAppearanceSmall"
+			            android:text="@string/mood" />
+					
+					<ImageView
+						android:id="@+id/impactMoodImage" 
+						android:src="@drawable/impact_4" 
+						android:layout_width="100dip"
+						android:layout_height="20dip">
+					</ImageView>
+				
+				</LinearLayout>
+				
+				<LinearLayout
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal" >
+					
+					<TextView
+			            android:id="@+id/impactFaithText"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:paddingRight="5dip"
+			            android:paddingLeft="5dip"
+			            android:singleLine="true"
+			            android:textAppearance="?android:attr/textAppearanceSmall"
+			            android:text="@string/faith" />
+					
+					<ImageView
+						android:id="@+id/impactFaithImage" 
+						android:src="@drawable/impact_4" 
+						android:layout_width="100dip"
+						android:layout_height="20dip">
+					</ImageView>
+				
+				</LinearLayout>
+				
+				<LinearLayout
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal" >
+					
+					<TextView
+			            android:id="@+id/impactEnvironmentText"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:paddingRight="5dip"
+			            android:paddingLeft="5dip"
+			            android:singleLine="true"
+			            android:textAppearance="?android:attr/textAppearanceSmall"
+			            android:text="@string/environment" />
+					
+					<ImageView
+						android:id="@+id/impactEnvironmentImage" 
+						android:src="@drawable/impact_4" 
+						android:layout_width="100dip"
+						android:layout_height="20dip">
+					</ImageView>
+				
+				</LinearLayout>
+				
+				<LinearLayout
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal" >
+					
+					<TextView
+			            android:id="@+id/impactManaText"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:paddingRight="5dip"
+			            android:paddingLeft="5dip"
+			            android:singleLine="true"
+			            android:textAppearance="?android:attr/textAppearanceSmall"
+			            android:text="@string/mana" />
+					
+					<ImageView
+						android:id="@+id/impactManaImage" 
+						android:src="@drawable/impact_4" 
+						android:layout_width="100dip"
+						android:layout_height="20dip"
+						android:layout_gravity="right|bottom" 
+	            		android:gravity="right|bottom">
+					</ImageView>
+				
+				</LinearLayout>
+			
+			</LinearLayout>
+			
+<!-- 			<TextView -->
+<!-- 	            android:id="@+id/description" -->
+<!-- 	            android:layout_width="wrap_content" -->
+<!-- 	            android:layout_height="wrap_content" -->
+<!-- 	            android:paddingRight="5dip" -->
+<!-- 	            android:paddingLeft="5dip" -->
+<!-- 	            android:singleLine="false" -->
+<!-- 	            android:textAppearance="?android:attr/textAppearanceSmall" -->
+<!-- 	            android:text="Description" /> -->
 	
 		</LinearLayout>
 

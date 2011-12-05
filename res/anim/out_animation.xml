@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--NEXT
-Translate: Attribute to move a view
-Second Frame
--->
 <set xmlns:android="http://schemas.android.com/apk/res/android">
 <!-- fade -->
 <alpha

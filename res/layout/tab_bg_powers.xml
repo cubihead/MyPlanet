@@ -14,7 +14,7 @@
 	    android:id="@+id/imageResearch" 
 	    android:layout_width="wrap_content" 
 	    android:layout_height="wrap_content"
-	    android:src="@drawable/ic_tab_research" >
+	    android:src="@drawable/ic_tab_powers" >
     </ImageView>
 
 	<TextView 

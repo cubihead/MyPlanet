@@ -6,57 +6,90 @@
 		<item>Name</item>
 	    <item>Description</item>
 	    <item>Cost</item>
+	    <item>ImageName</item>
+	    <item>Population</item>
+	    <item>Mood</item>
+	    <item>Faith</item>
+	    <item>Environment</item>
+	    <item>Mana</item>
 	    </string-array>
     <string-array name="powers">
 	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-	    <item>010</item>
-		<item>Asteroid extraction facility</item>
-	    <item>Description</item>
-	    <item>100000</item>
-	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-	    <item>009</item>
-		<item> </item>
-	    <item>Description</item>
-	    <item>75000</item>
-	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-	    <item>008</item>
-		<item>Oil rig</item>
-	    <item>Description</item>
-	    <item>45000</item>
-	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 	    <item>007</item>
-		<item> </item>
-	    <item>Description</item>
-	    <item>20000</item>
+		<item>Deluge</item>
+	    <item></item>
+	    <item>0</item>
+	    <item>deluge</item>
+	    <item>1</item>
+	    <item>3</item>
+	    <item>7</item>
+	    <item>7</item>
+	    <item>7</item>
 	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 	    <item>006</item>
-		<item>Steelmill</item>
-	    <item>Description</item>
-	    <item>10000</item>
+		<item>Storm</item>
+	    <item></item>
+	    <item>10</item>
+	    <item>storm</item>
+	    <item>3</item>
+	    <item>3</item>
+	    <item>5</item>
+	    <item>5</item>
+	    <item>4</item>
 	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 	    <item>005</item>
-		<item>Cement factory</item>
-	    <item>Description</item>
-	    <item>5000</item>
+		<item>Rich harvest</item>
+	    <item></item>
+	    <item>5</item>
+	    <item>harvest</item>
+	    <item>5</item>
+	    <item>4</item>
+	    <item>4</item>
+	    <item>3</item>
+	    <item>4</item>
 	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 	    <item>004</item>
-		<item>Coal Mine</item>
-	    <item>Description</item>
-	    <item>1500</item>
+		<item>Drought</item>
+	    <item></item>
+	    <item>5</item>
+	    <item>drought</item>
+	    <item>6</item>
+	    <item>4</item>
+	    <item>4</item>
+	    <item>2</item>
+	    <item>4</item>
 	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 	    <item>003</item>
-		<item>Quarry</item>
-	    <item>Description</item>
-	    <item>400</item>
+		<item>Messiah</item>
+	    <item></item>
+	    <item>15</item>
+	    <item>messiah</item>
+	    <item>4</item>
+	    <item>6</item>
+	    <item>6</item>
+	    <item>4</item>
+	    <item>4</item>
 	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 	    <item>002</item>
-		<item>Farm</item>
-	    <item>Description</item>
+		<item>Plague</item>
+	    <item></item>
 	    <item>200</item>
+	    <item>plague</item>
+	    <item>3</item>
+	    <item>2</item>
+	    <item>6</item>
+	    <item>3</item>
+	    <item>4</item>
 	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 	    <item>001</item>
-		<item>Sawmill</item>
-	    <item>Description</item>
+		<item>Fertility</item>
+	    <item></item>
 	    <item>100</item>
+	    <item>fertility</item>
+	    <item>5</item>
+	    <item>5</item>
+	    <item>5</item>
+	    <item>3</item>
+	    <item>4</item>
     </string-array>
 </resources>
