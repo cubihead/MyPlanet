@@ -81,12 +81,20 @@
 			            android:textAppearance="?android:attr/textAppearanceSmall"
 			            android:text="@string/population" />
 					
-					<ImageView
-						android:id="@+id/impactPopulationImage" 
-						android:src="@drawable/impact_4" 
-						android:layout_width="100dip"
-						android:layout_height="20dip">
-					</ImageView>
+					<LinearLayout
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:orientation="vertical" >
+					
+						<ImageView
+							android:id="@+id/impactPopulationImage" 
+							android:src="@drawable/impact_4" 
+							android:layout_width="100dip"
+							android:layout_height="20dip"
+							android:layout_gravity="right">
+						</ImageView>
+						
+					</LinearLayout>
 				
 				</LinearLayout>
 				
@@ -105,12 +113,20 @@
 			            android:textAppearance="?android:attr/textAppearanceSmall"
 			            android:text="@string/mood" />
 					
-					<ImageView
-						android:id="@+id/impactMoodImage" 
-						android:src="@drawable/impact_4" 
-						android:layout_width="100dip"
-						android:layout_height="20dip">
-					</ImageView>
+					<LinearLayout
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:orientation="vertical" >
+						
+						<ImageView
+							android:id="@+id/impactMoodImage" 
+							android:src="@drawable/impact_4" 
+							android:layout_width="100dip"
+							android:layout_height="20dip"
+							android:layout_gravity="right">
+						</ImageView>
+						
+					</LinearLayout>
 				
 				</LinearLayout>
 				
@@ -129,12 +145,20 @@
 			            android:textAppearance="?android:attr/textAppearanceSmall"
 			            android:text="@string/faith" />
 					
-					<ImageView
-						android:id="@+id/impactFaithImage" 
-						android:src="@drawable/impact_4" 
-						android:layout_width="100dip"
-						android:layout_height="20dip">
-					</ImageView>
+					<LinearLayout
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:orientation="vertical" >
+					
+						<ImageView
+							android:id="@+id/impactFaithImage" 
+							android:src="@drawable/impact_4" 
+							android:layout_width="100dip"
+							android:layout_height="20dip"
+							android:layout_gravity="right">
+						</ImageView>
+						
+					</LinearLayout>
 				
 				</LinearLayout>
 				
@@ -153,12 +177,20 @@
 			            android:textAppearance="?android:attr/textAppearanceSmall"
 			            android:text="@string/environment" />
 					
-					<ImageView
-						android:id="@+id/impactEnvironmentImage" 
-						android:src="@drawable/impact_4" 
-						android:layout_width="100dip"
-						android:layout_height="20dip">
-					</ImageView>
+					<LinearLayout
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:orientation="vertical" >
+					
+						<ImageView
+							android:id="@+id/impactEnvironmentImage" 
+							android:src="@drawable/impact_4" 
+							android:layout_width="100dip"
+							android:layout_height="20dip"
+							android:layout_gravity="right">
+						</ImageView>
+						
+					</LinearLayout>
 				
 				</LinearLayout>
 				
@@ -177,14 +209,20 @@
 			            android:textAppearance="?android:attr/textAppearanceSmall"
 			            android:text="@string/mana" />
 					
-					<ImageView
-						android:id="@+id/impactManaImage" 
-						android:src="@drawable/impact_4" 
-						android:layout_width="100dip"
-						android:layout_height="20dip"
-						android:layout_gravity="right|bottom" 
-	            		android:gravity="right|bottom">
-					</ImageView>
+					<LinearLayout
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:orientation="vertical" >
+					
+						<ImageView
+							android:id="@+id/impactManaImage" 
+							android:src="@drawable/impact_4" 
+							android:layout_width="100dip"
+							android:layout_height="20dip"
+							android:layout_gravity="right" >
+						</ImageView>
+						
+					</LinearLayout>
 				
 				</LinearLayout>
 			
