@@ -2,12 +2,13 @@
 <resources>
     <string name="app_name">Planet</string>
     <string name="overview">Übersicht</string>
-    <string name="factory">Fabrik</string>
-    <string name="research">Forschung</string>
+    <string name="powers">Gewalten</string>
     <string name="population">Einwohner</string>
-    <string name="resources">Rohstoffe</string>
+    <string name="mana">Mana</string>
     <string name="mood">Laune</string>
     <string name="energy">Energie</string>
     <string name="environment">Umwelt</string>
     <string name="perhour">/Std</string>
+    <string name="dedicated">gewidmet:</string>
+    <string name="credits">Info</string>
 </resources>

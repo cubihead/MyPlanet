@@ -26,7 +26,7 @@
         
         <activity android:name="com.beecub.games.planet.OverviewActivity"></activity>
         <activity android:name="com.beecub.games.planet.FactoryActivity"></activity>
-        <activity android:name="com.beecub.games.planet.TasksActivity"></activity>
+        <activity android:name="com.beecub.games.planet.PowersActivity"></activity>
         <activity android:name="com.beecub.games.planet.SubTasksActivity"></activity>
 
     </application>

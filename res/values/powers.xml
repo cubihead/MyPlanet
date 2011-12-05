@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="def">
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<item>Number</item>
+		<item>Name</item>
+	    <item>Description</item>
+	    <item>Cost</item>
+	    </string-array>
+    <string-array name="powers">
+	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	    <item>010</item>
+		<item>Asteroid extraction facility</item>
+	    <item>Description</item>
+	    <item>100000</item>
+	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	    <item>009</item>
+		<item> </item>
+	    <item>Description</item>
+	    <item>75000</item>
+	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	    <item>008</item>
+		<item>Oil rig</item>
+	    <item>Description</item>
+	    <item>45000</item>
+	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	    <item>007</item>
+		<item> </item>
+	    <item>Description</item>
+	    <item>20000</item>
+	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	    <item>006</item>
+		<item>Steelmill</item>
+	    <item>Description</item>
+	    <item>10000</item>
+	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	    <item>005</item>
+		<item>Cement factory</item>
+	    <item>Description</item>
+	    <item>5000</item>
+	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	    <item>004</item>
+		<item>Coal Mine</item>
+	    <item>Description</item>
+	    <item>1500</item>
+	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	    <item>003</item>
+		<item>Quarry</item>
+	    <item>Description</item>
+	    <item>400</item>
+	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	    <item>002</item>
+		<item>Farm</item>
+	    <item>Description</item>
+	    <item>200</item>
+	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	    <item>001</item>
+		<item>Sawmill</item>
+	    <item>Description</item>
+	    <item>100</item>
+    </string-array>
+</resources>

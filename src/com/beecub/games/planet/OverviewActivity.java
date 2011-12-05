@@ -33,7 +33,7 @@ public class OverviewActivity extends Activity {
         
         mPlanetName.setText(PlanetActivity.mName);
         mPlanetName.setTypeface(PlanetActivity.mTypeface);
-        mPlanetMoney.setText(this.getString(R.string.resources) + ": " + PlanetActivity.mResources + "/" + PlanetActivity.mResourcesMax);
+        mPlanetMoney.setText(this.getString(R.string.mana) + ": " + PlanetActivity.mMana + "/" + PlanetActivity.mManaMax);
         mPlanetMoney.setTypeface(PlanetActivity.mTypeface);
         mPlanetPopulation.setText(this.getString(R.string.population) + ": " + PlanetActivity.mPopulation);
         mPlanetPopulation.setTypeface(PlanetActivity.mTypeface);

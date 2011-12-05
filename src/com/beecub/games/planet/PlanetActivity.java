@@ -16,6 +16,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -39,16 +42,10 @@ public class PlanetActivity extends TabActivity {
     public static int mTimeMultiplier = 0;
     public static int mResourcePerHour = 1;
     
-    // buildings / research
-    public static int mLevelCulture;
-    public static int mLevelPower;
-    public static int mLevelGreen;
-    
-    
     public static long mLastLogin; 
     public static long mPopulation = 0;
-    public static long mResources = 10;
-    public static long mResourcesMax = 10;
+    public static long mMana = 10;
+    public static long mManaMax = 10;
     
     public static Typeface mTypeface;    
     private static TabHost mTabHost;
@@ -83,11 +80,30 @@ public class PlanetActivity extends TabActivity {
         setupTab(new TextView(this), getString(R.string.overview), intent, R.layout.tab_bg_overview);
 //        intent = new Intent().setClass(this, FactoryActivity.class);
 //        setupTab(new TextView(this), getString(R.string.factory), intent, R.layout.tab_bg_factory);
-        intent = new Intent().setClass(this, TasksActivity.class);
-        setupTab(new TextView(this), getString(R.string.research), intent, R.layout.tab_bg_research);
+        intent = new Intent().setClass(this, PowersActivity.class);
+        setupTab(new TextView(this), getString(R.string.powers), intent, R.layout.tab_bg_powers);
         
         mTabHost.setCurrentTab(0);
         //toast("test");
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case R.id.credits:
+            CreditDialog creditDialog = new CreditDialog(this);
+            creditDialog.show();
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
     }
     
     @Override
@@ -160,14 +176,11 @@ public class PlanetActivity extends TabActivity {
         mMood = settings.getInt("mood", 50);
         mEnvironment = settings.getInt("environment", 50);
         mEnergy = settings.getInt("energy", 50);
-        mLevelCulture = settings.getInt("level_culture", 0);
-        mLevelGreen = settings.getInt("level_green", 0);
-        mLevelPower = settings.getInt("level_power", 0);
         
         mPopulation = settings.getLong("population", 0);
         mLastLogin = settings.getLong("lastlogin", 0);
-        mResources = settings.getLong("resources", 10);
-        mResourcesMax = settings.getLong("resourcesmax", 10);
+        mMana = settings.getLong("resources", 10);
+        mManaMax = settings.getLong("resourcesmax", 10);
                 
     }
     
@@ -183,14 +196,11 @@ public class PlanetActivity extends TabActivity {
         editor.putInt("mood", mMood);
         editor.putInt("environment", mEnvironment);
         editor.putInt("energy", mEnergy);
-        editor.putInt("level_culture", mLevelCulture);
-        editor.putInt("level_green", mLevelGreen);
-        editor.putInt("level_power", mLevelPower);
         
         editor.putLong("population", mPopulation);
         editor.putLong("lastlogin", currentDate.getTime());
-        editor.putLong("resources", mResources);
-        editor.putLong("resourcesmax", mResourcesMax);
+        editor.putLong("resources", mMana);
+        editor.putLong("resourcesmax", mManaMax);
         
     }
     

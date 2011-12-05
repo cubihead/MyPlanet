@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+ 	android:layout_height="wrap_content"
+ 	android:layout_width="wrap_content"
+ 	android:orientation="vertical" >
+	
+	<TextView 
+		android:id="@+id/bybeecub"
+		android:layout_width="fill_parent" 
+		android:layout_height="fill_parent"
+		android:text="by beecub" 
+		android:gravity="center"
+		android:paddingLeft="15dip"
+		android:paddingRight="15dip"/>
+		
+	<ImageView 
+		android:id="@+id/beecub"
+	 	android:layout_width="fill_parent" 
+	 	android:layout_height="fill_parent"
+	 	android:layout_centerHorizontal="true"
+	 	android:src="@drawable/beecub"
+	 	android:gravity="center"
+	 	android:paddingTop="5dip"
+	 	android:paddingBottom="15dip"/>	
+	 	
+ 	<TextView 
+		android:id="@+id/dedicated"
+		android:layout_width="fill_parent" 
+		android:layout_height="fill_parent"
+		android:text="dedicated" 
+		android:gravity="center"
+		android:paddingLeft="15dip"
+		android:paddingRight="15dip"/>
+		
+	<TextView 
+		android:id="@+id/credits"
+		android:layout_width="fill_parent" 
+		android:layout_height="fill_parent"
+		android:text="Cornelius" 
+		android:gravity="center"
+		android:paddingLeft="15dip"
+		android:paddingRight="15dip"
+		android:paddingBottom="15dip"/>
+		
+	<ImageView 
+		android:id="@+id/corn"
+	 	android:layout_width="150dip" 
+	 	android:layout_height="150dip"
+	 	android:layout_centerHorizontal="true"
+	 	android:src="@drawable/corn"
+	 	android:gravity="center"
+	 	android:paddingTop="5dip"
+	 	android:paddingBottom="15dip" 
+	 	android:layout_marginBottom="15dip"
+	 	android:layout_gravity="center"/>	
+ 
+</LinearLayout>
