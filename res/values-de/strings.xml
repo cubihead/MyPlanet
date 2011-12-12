@@ -2,13 +2,21 @@
 <resources>
     <string name="app_name">My Planet</string>
     <string name="overview">Übersicht</string>
-    <string name="powers">Gewalten</string>
+    <string name="weather">Wetter</string>
     <string name="population">Einwohner</string>
-    <string name="mana">Mana</string>
+    <string name="elements">Elemente</string>
     <string name="mood">Laune</string>
-    <string name="faith">Glaube</string>
+    <string name="temperature">Temperatur</string>
     <string name="environment">Umwelt</string>
     <string name="perhour">/Std</string>
     <string name="dedicated">gewidmet:</string>
-    <string name="credits">Info</string>
+    <string name="credits">Credits</string>
+    <string name="active">Aktiviert:</string>
+    <string name="nothing">Nichts</string>
+    <string name="settings">Einstellungen</string>
+    <string name="stop">Beenden</string>
+    
+    
+    <string name="name_title">Planet Name</string>
+    <string name="name_summary">Ändere den Namen deines Planeten</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.beecub.games.planet;
+package com.beecub.games.planet.dialogs;
 
 import android.app.Dialog;
 import android.beecub.games.planet.R;

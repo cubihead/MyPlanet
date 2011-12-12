@@ -9,13 +9,13 @@
 	    <item>ImageName</item>
 	    <item>Population</item>
 	    <item>Mood</item>
-	    <item>Faith</item>
+	    <item>Variation</item>
 	    <item>Environment</item>
-	    <item>Mana</item>
+	    <item>Elements</item>
 	    </string-array>
     <string-array name="powers">
 	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-	    <item>007</item>
+	    <item>008</item>
 		<item>Deluge</item>
 	    <item></item>
 	    <item>0</item>
@@ -26,29 +26,7 @@
 	    <item>7</item>
 	    <item>7</item>
 	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-	    <item>006</item>
-		<item>Storm</item>
-	    <item></item>
-	    <item>10</item>
-	    <item>storm</item>
-	    <item>3</item>
-	    <item>3</item>
-	    <item>5</item>
-	    <item>5</item>
-	    <item>4</item>
-	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-	    <item>005</item>
-		<item>Rich harvest</item>
-	    <item></item>
-	    <item>5</item>
-	    <item>harvest</item>
-	    <item>5</item>
-	    <item>4</item>
-	    <item>4</item>
-	    <item>3</item>
-	    <item>4</item>
-	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-	    <item>004</item>
+   	    <item>007</item>
 		<item>Drought</item>
 	    <item></item>
 	    <item>5</item>
@@ -59,11 +37,44 @@
 	    <item>2</item>
 	    <item>4</item>
 	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	    <item>006</item>
+		<item>Snowstorm</item>
+	    <item></item>
+	    <item>10</item>
+	    <item>snowstorm</item>
+	    <item>3</item>
+	    <item>3</item>
+	    <item>5</item>
+	    <item>5</item>
+	    <item>4</item>
+	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	    <item>005</item>
+		<item>Storm</item>
+	    <item></item>
+	    <item>10</item>
+	    <item>storm</item>
+	    <item>3</item>
+	    <item>3</item>
+	    <item>5</item>
+	    <item>5</item>
+	    <item>4</item>
+	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<item>004</item>
+		<item>Snowfall</item>
+	    <item></item>
+	    <item>5</item>
+	    <item>snowfall</item>
+	    <item>5</item>
+	    <item>4</item>
+	    <item>4</item>
+	    <item>3</item>
+	    <item>4</item>
+	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 	    <item>003</item>
-		<item>Messiah</item>
+		<item>Fog</item>
 	    <item></item>
 	    <item>15</item>
-	    <item>messiah</item>
+	    <item>fog</item>
 	    <item>4</item>
 	    <item>6</item>
 	    <item>6</item>
@@ -71,10 +82,10 @@
 	    <item>4</item>
 	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 	    <item>002</item>
-		<item>Plague</item>
+		<item>Rain</item>
 	    <item></item>
 	    <item>200</item>
-	    <item>plague</item>
+	    <item>rain</item>
 	    <item>3</item>
 	    <item>2</item>
 	    <item>6</item>
@@ -82,10 +93,10 @@
 	    <item>4</item>
 	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 	    <item>001</item>
-		<item>Fertility</item>
+		<item>Sunshine</item>
 	    <item></item>
 	    <item>100</item>
-	    <item>fertility</item>
+	    <item>sunshine</item>
 	    <item>5</item>
 	    <item>5</item>
 	    <item>5</item>

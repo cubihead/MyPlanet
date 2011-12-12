@@ -9,21 +9,17 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-import android.widget.TextView;
 
 public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {    
     class PlanetThread extends Thread {
-        
-        public static final int STATE_RUNNING = 1;
-        public static final int STATE_PAUSE = 2;
         
         private static final String KEY_Planet_HEIGHT = "mPlanetHeight";
         private static final String KEY_Planet_WIDTH = "mPlanetWidth";
@@ -40,6 +36,10 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         // background
         private Bitmap mBackgroundImage;
         private float mBackgroundOffset = 0.0F;
+        
+        // active power
+        private Drawable mPower;
+        private Drawable mPowerBorder;
         
         // darkness
         private Bitmap mDarknessImage;
@@ -78,20 +78,18 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         
         private float mRotation;
         
-        private int mMode;
-        
         private boolean mRun = false;
+        private boolean mPause = false;
         
         private Resources mResources;
         
         // bars
         private Bar mHappinessBar;
         private Bar mEnvironmentBar;
-        private Bar mFaithBar;
+        private Bar mTemperatureBar;
         
         
-        public PlanetThread(SurfaceHolder surfaceHolder, Context context,
-                Handler handler) {
+        public PlanetThread(SurfaceHolder surfaceHolder, Context context) {
             
             mSurfaceHolder = surfaceHolder;
             //mContext = context;
@@ -134,13 +132,16 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         public void doStart() {
             synchronized (mSurfaceHolder) {
                 mDaytime = 0;                
-                setState(STATE_RUNNING);
+                setRunning(true);
+                mPause = false;
             }
         }
         
         public void pause() {
             synchronized (mSurfaceHolder) {
-                if (mMode == STATE_RUNNING) setState(STATE_PAUSE);
+                Log.v("beecub", "Pause");
+                if (mRun == true) setRunning(false);
+                mPause = true;
             }
         }
         
@@ -153,7 +154,7 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
          */
         public synchronized void restoreState(Bundle savedState) {
             synchronized (mSurfaceHolder) {
-                setState(STATE_PAUSE);
+                setRunning(false);
 
                 mPlanetWidth = savedState.getInt(KEY_Planet_WIDTH);
                 mPlanetHeight = savedState.getInt(KEY_Planet_HEIGHT);
@@ -186,42 +187,6 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             return map;
         }
         
-        /**
-         * Sets the game mode. That is, whether we are running, paused, in the
-         * failure state, in the victory state, etc.
-         * 
-         * @see #setState(int, CharSequence)
-         * @param mode one of the STATE_* constants
-         */
-        public void setState(int mode) {
-            synchronized (mSurfaceHolder) {
-                setState(mode, null);
-            }
-        }
-        
-        /**
-         * Sets the game mode. That is, whether we are running, paused, in the
-         * failure state, in the victory state, etc.
-         * 
-         * @param mode one of the STATE_* constants
-         * @param message string to add to screen or null
-         */
-        public void setState(int mode, CharSequence message) {
-            synchronized (mSurfaceHolder) {
-                mMode = mode;
-
-                if (mMode == STATE_RUNNING) {
-                    Bundle b = new Bundle();
-                    b.putString("text", "");
-                    b.putInt("viz", View.INVISIBLE);
-                } else {
-                    Bundle b = new Bundle();
-                    b.putString("text", "testtext_setState");
-                    b.putInt("viz", View.VISIBLE);
-                }
-            }
-        }
-        
         @Override
         public void run() {
             while (mRun) {
@@ -229,7 +194,9 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
                 try {
                     c = mSurfaceHolder.lockCanvas(null);
                     synchronized (mSurfaceHolder) {
-                        doDraw(c);
+                        if(!mPause) {
+                            doDraw(c);
+                        }
                     }
                 } finally {
                     if (c != null) {
@@ -240,7 +207,8 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         }
         
         public void setRunning(boolean b) {
-            mRun = b;
+            mRun = true;
+            //mRun = b;
         }
         
         /* Callback invoked when the surface dimensions change. */
@@ -320,13 +288,74 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             mPlanetBorder.draw(canvas);
             
             drawBars(canvas);
+            
+            drawPowerNotification(canvas);
+            
+            drawBasis(canvas);
+            
+            PlanetActivity.progress();
+        }
+        
+        private void drawBasis(Canvas canvas) {
+            Paint paint = new Paint();
+            paint.setColor(Color.WHITE);
+            paint.setStyle(Style.FILL);
+            paint.setTextSize(30);
+            paint.setTypeface(PlanetActivity.mTypeface);
+            paint.setAntiAlias(true);
+            canvas.drawText(PlanetActivity.mName, 10, 30, paint);
+            paint.setTextSize(20);
+            canvas.drawText(mResources.getString(R.string.elements) + ": " + (long)(PlanetActivity.mElements) + "/100", 10, 55, paint);
+            canvas.drawText(mResources.getString(R.string.population) + ": " + (long)(PlanetActivity.mPopulation), 10, 80, paint);
+        }
+        
+        private void drawPowerNotification(Canvas canvas) {
+            String number = String.valueOf(PlanetActivity.mPower);
+            String name = "Nothing";
+            boolean found = false;
+            
+            if(number.length() < 2) 
+                number = "0" + number;
+            if(number.length() < 3)
+                number = "0" + number;
+            
+            String[] powers = mResources.getStringArray(R.array.powers);
+            int i = 0;
+            while(i < powers.length && !found) {
+                if(powers[i].equalsIgnoreCase(number)) {
+                    name = powers[i+1];
+                    int resID = getResources().getIdentifier("power_" + powers[i+4], "drawable", PlanetActivity.mPackageName);
+                    mPower = mResources.getDrawable(resID);
+                    found = true;
+                }
+                i+=10;
+            }
+            
+            if(!found) {
+                mPower = mResources.getDrawable(R.drawable.power_000);
+                name = mResources.getString(R.string.nothing);
+            }
+            mPowerBorder = mResources.getDrawable(R.drawable.powers_border);
+            mPower.setBounds(10, mCanvasHeight - 66 - 10 - mResources.getDrawable(R.drawable.bar_green).getIntrinsicHeight(), 10 + 66 + mResources.getDrawable(R.drawable.bar_green).getIntrinsicHeight(), mCanvasHeight - 10);
+            mPowerBorder.setBounds(10, mCanvasHeight - 66 - 10 - mResources.getDrawable(R.drawable.bar_green).getIntrinsicHeight(), 10 + 66 + mResources.getDrawable(R.drawable.bar_green).getIntrinsicHeight(), mCanvasHeight - 10);
+            mPower.draw(canvas);
+            mPowerBorder.draw(canvas);
+            
+            Paint paint = new Paint();
+            paint.setColor(Color.WHITE);
+            paint.setStyle(Style.FILL);
+            paint.setTextSize(20);
+            paint.setTypeface(PlanetActivity.mTypeface);
+            paint.setAntiAlias(true);
+            canvas.drawText(mResources.getString(R.string.active), 10 + 66 + mResources.getDrawable(R.drawable.bar_green).getIntrinsicHeight() + 10F, (mCanvasHeight - 43 - 10 - mResources.getDrawable(R.drawable.bar_green).getIntrinsicHeight()), paint);
+            canvas.drawText(name, 10 + 66 + mResources.getDrawable(R.drawable.bar_green).getIntrinsicHeight() + 10F, (mCanvasHeight - 20 - 10 - mResources.getDrawable(R.drawable.bar_green).getIntrinsicHeight()), paint);
         }
         
         private void drawPower(Canvas canvas) {
-            long time = new Date().getTime();
+            float time = new Date().getTime();
             canvas.save();
             
-            if(PlanetActivity.mPower == 1) {
+            if(PlanetActivity.mPower == 8) {
                 canvas.rotate(mRotation, mCanvasWidth / 2, mCanvasHeight / 2);
                 time = time - PlanetActivity.mPowerStartTime;
                 time = time / (1000 * 60);
@@ -369,13 +398,15 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         private void drawPopulation(Canvas canvas) {
             canvas.save();
             if(bDaytime) {
+                mPlanetPopulation = mResources.getDrawable(R.drawable.planet_popuatlion_1);
                 if(PlanetActivity.mPopulation < 1000)
-                    mPlanetPopulation = mResources.getDrawable(R.drawable.planet_popuatlion_2);
+                    mPlanetPopulation = mResources.getDrawable(R.drawable.planet_popuatlion_1);
                 else if(PlanetActivity.mPopulation < 10000)
                     mPlanetPopulation = mResources.getDrawable(R.drawable.planet_popuatlion_2);
             } else {
+                mPlanetPopulation = mResources.getDrawable(R.drawable.planet_popuatlion_1_night);
                 if(PlanetActivity.mPopulation < 1000)
-                    mPlanetPopulation = mResources.getDrawable(R.drawable.planet_popuatlion_2_night);
+                    mPlanetPopulation = mResources.getDrawable(R.drawable.planet_popuatlion_1_night);
                 else if(PlanetActivity.mPopulation < 10000)
                     mPlanetPopulation = mResources.getDrawable(R.drawable.planet_popuatlion_2_night);
                 canvas.rotate(mRotation, mCanvasWidth / 2, mCanvasHeight / 2);
@@ -391,21 +422,21 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         private void drawBars(Canvas canvas) {
             // happiness bar
             if(PlanetActivity.mMood < 30)
-                mHappinessBar = new Bar(false, 66, false, mResources.getDrawable(R.drawable.icon_face_angry));
+                mHappinessBar = new Bar(0, false, 66, false, mResources.getDrawable(R.drawable.icon_face_angry));
             else if(PlanetActivity.mMood >= 70)
-                mHappinessBar = new Bar(false, 66, false, mResources.getDrawable(R.drawable.icon_face_grin));
+                mHappinessBar = new Bar(0, false, 66, false, mResources.getDrawable(R.drawable.icon_face_grin));
             else
-                mHappinessBar = new Bar(false, 66, false, mResources.getDrawable(R.drawable.icon_face_plain));
+                mHappinessBar = new Bar(0, false, 66, false, mResources.getDrawable(R.drawable.icon_face_plain));
             mHappinessBar.setPercent(PlanetActivity.mMood / 100.0F);
             mHappinessBar.onDraw(canvas);
             
-            // faith bar
-            mFaithBar = new Bar(false, 43, false, mResources.getDrawable(R.drawable.icon_faith));
-            mFaithBar.setPercent(PlanetActivity.mFaith / 100.0F);
-            mFaithBar.onDraw(canvas);
+            // temperature bar
+            mTemperatureBar = new Bar(1, true, 43, false, mResources.getDrawable(R.drawable.icon_temperature));
+            mTemperatureBar.setPercent(PlanetActivity.mTemperature / 100.0F);
+            mTemperatureBar.onDraw(canvas);
             
             // environment bar
-            mEnvironmentBar = new Bar(false, 20, false, mResources.getDrawable(R.drawable.icon_environment));
+            mEnvironmentBar = new Bar(0, true, 20, false, mResources.getDrawable(R.drawable.icon_environment));
             mEnvironmentBar.setPercent(PlanetActivity.mEnvironment / 100.0F);
             mEnvironmentBar.onDraw(canvas);
         }
@@ -497,26 +528,32 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             public static final int MODE_NORMAL = 0;
             public static final int MODE_WARNING = 1;
             private Drawable mBackgroundImage;
-            private Drawable mDefaultBar;
-            private Drawable mCriticalBar;
+            private Drawable mYellowBar;
+            private Drawable mRedBar;
+            private Drawable mGreenBar;
+            private Drawable mBlueBar;
+            private Drawable mWhiteBar;
             private int mFillWidth = 0;
             private Drawable mIconImage;
             private boolean mIsBallance = false;
             private Drawable mMidPoint;
+            private int mType;
             private int mMode;
             private int mOffsetBottom;
             private int mOffsetLeft;
-            private Drawable mWarningBar;
             private int mWidth = 0;
 
-            public Bar(boolean paramInt, int paramDrawable, boolean left, Drawable paramIcon)
+            public Bar(int type, boolean paramInt, int paramDrawable, boolean left, Drawable paramIcon)
             {
+                this.mType = type;
                 this.mIsBallance = paramInt;
                 this.mIconImage = paramIcon;
                 this.mBackgroundImage = mResources.getDrawable(R.drawable.bar_back);
-                this.mDefaultBar = mResources.getDrawable(R.drawable.bar_green);
-                this.mWarningBar = mResources.getDrawable(R.drawable.bar_yellow);
-                this.mCriticalBar = mResources.getDrawable(R.drawable.bar_red);
+                this.mGreenBar = mResources.getDrawable(R.drawable.bar_green);
+                this.mYellowBar = mResources.getDrawable(R.drawable.bar_yellow);
+                this.mRedBar = mResources.getDrawable(R.drawable.bar_red);
+                this.mBlueBar = mResources.getDrawable(R.drawable.bar_blue);
+                this.mWhiteBar = mResources.getDrawable(R.drawable.bar_white);
                 this.mMidPoint = mResources.getDrawable(R.drawable.mid_mark);
                 updateOffsets(paramDrawable, left);
             }
@@ -530,20 +567,58 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
                 this.mBackgroundImage.setBounds(j, i - this.mOffsetBottom - this.mBackgroundImage.getIntrinsicHeight(), j + this.mWidth, i - this.mOffsetBottom);
                 this.mBackgroundImage.draw(paramCanvas);
                 Drawable localDrawable;
-                switch (this.mMode)
-                {
-                    default:
-                        localDrawable = this.mDefaultBar;
-                        break;
-                    case 0:
-                        localDrawable = this.mDefaultBar;
-                        break;
-                    case 1:
-                        localDrawable = this.mWarningBar;
-                        break;
-                    case 2:
-                        localDrawable = this.mCriticalBar;
-                        break;
+                switch (this.mType) {
+                default:
+                    switch (this.mMode)
+                    {
+                        default:
+                            localDrawable = this.mGreenBar;
+                            break;
+                        case 0:
+                            localDrawable = this.mGreenBar;
+                            break;
+                        case 1:
+                            localDrawable = this.mYellowBar;
+                            break;
+                        case 2:
+                            localDrawable = this.mRedBar;
+                            break;
+                    }
+                    break;
+                case 0:
+                    switch (this.mMode)
+                    {
+                        default:
+                            localDrawable = this.mGreenBar;
+                            break;
+                        case 0:
+                            localDrawable = this.mGreenBar;
+                            break;
+                        case 1:
+                            localDrawable = this.mYellowBar;
+                            break;
+                        case 2:
+                            localDrawable = this.mRedBar;
+                            break;
+                    }
+                    break;
+                case 1:
+                    switch (this.mMode)
+                    {
+                        default:
+                            localDrawable = this.mBlueBar;
+                            break;
+                        case 0:
+                            localDrawable = this.mBlueBar;
+                            break;
+                        case 1:
+                            localDrawable = this.mWhiteBar;
+                            break;
+                        case 2:
+                            localDrawable = this.mRedBar;
+                            break;
+                    }
+                    break;
                 }
                 localDrawable.setBounds(j, i - this.mOffsetBottom - localDrawable.getIntrinsicHeight(), j + this.mFillWidth, i - this.mOffsetBottom);
                 localDrawable.draw(paramCanvas);
@@ -584,28 +659,16 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
     
-    /** Handle to the application context, used to e.g. fetch Drawables. */
-    //private Context mContext;
-
-    /** Pointer to the text view to display "Paused.." etc. */
-    //private TextView mStatusText;
-    
     private PlanetThread thread;
     
-    public PlanetView(Context context, AttributeSet attrs) {
-        super(context, attrs);
+    public PlanetView(Context context) {
+        super(context);
 
         // register our interest in hearing about changes to our surface
         SurfaceHolder holder = getHolder();
         holder.addCallback(this);
 
-        thread = new PlanetThread(holder, context, new Handler() {
-            @Override
-            public void handleMessage(Message m) {
-                //mStatusText.setVisibility(m.getData().getInt("viz"));
-                //mStatusText.setText(m.getData().getString("text"));
-            }
-        });
+        thread = new PlanetThread(holder, context);
 
         setFocusable(true);
     }
@@ -615,14 +678,8 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
     }
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
-        if (!hasWindowFocus) thread.pause();
-    }
-
-    /**
-     * Installs a pointer to the text view used for messages.
-     */
-    public void setTextView(TextView textView) {
-        //mStatusText = textView;
+//        if (!hasWindowFocus) thread.pause();
+//        else thread.doStart();
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int width,
@@ -631,17 +688,13 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
-        if(thread.getState() == Thread.State.NEW) {
-            thread.setRunning(true);
-            thread.start();
-        }
-        else {
-        }
+        thread.setRunning(true);
+        thread.start();
     }
 
     public void surfaceDestroyed(SurfaceHolder holder) {
         boolean retry = true;
-        thread.setRunning(false);
+        //thread.setRunning(false);
         while (retry) {
             try {
                 thread.join();

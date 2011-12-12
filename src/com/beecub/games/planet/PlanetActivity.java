@@ -11,6 +11,7 @@ import android.beecub.games.planet.R;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,26 +31,29 @@ import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.beecub.games.planet.dialogs.CreditDialog;
+
 public class PlanetActivity extends TabActivity {
     
     public static final String PREFS_NAME = "PlanetPrefs";
     public static final String LOG_TAG = "beecub";
     
     public static String mName = "Corn";
+    public static String mPackageName;
     
-    public static int mLevel = 1;
-    public static int mMood;
-    public static int mEnvironment;
-    public static int mFaith;
-    public static int mTimeMultiplier = 0;
-    public static int mResourcePerHour = 1;
+    public static float mLevel = 1;
+    public static float mMood;
+    public static float mEnvironment;
+    public static float mTemperature;
+    public static float mTimeMultiplier = 0;
+    public static float mResourcePerHour = 1;
     
     public static long mLastLogin; 
-    public static long mPopulation = 0;
-    public static long mMana = 10;
+    public static float mPopulation = 0;
+    public static float mElements = 10;
     
-    public static int mPower;
-    public static long mPowerStartTime;
+    public static int mPower = 0;
+    public static float mPowerStartTime;
     
     public static Typeface mTypeface;    
     static TabHost mTabHost;
@@ -61,6 +65,9 @@ public class PlanetActivity extends TabActivity {
     
     public static int mCurrentPosition;
     
+    public static SharedPreferences mSettings;
+    public static Editor mEditor;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,9 +76,10 @@ public class PlanetActivity extends TabActivity {
         
         Log.v(LOG_TAG, "0");
         
-        initData();
-        
+        mPackageName = getPackageName();
         mContext = getApplicationContext();
+        
+        initData();        
         
         String ns = Context.NOTIFICATION_SERVICE;
         mNotificationManager = (NotificationManager) getSystemService(ns);
@@ -88,7 +96,7 @@ public class PlanetActivity extends TabActivity {
 //        intent = new Intent().setClass(this, FactoryActivity.class);
 //        setupTab(new TextView(this), getString(R.string.factory), intent, R.layout.tab_bg_factory);
         intent = new Intent().setClass(this, PowersActivity.class);
-        setupTab(new TextView(this), getString(R.string.powers), intent, R.layout.tab_bg_powers);
+        setupTab(new TextView(this), getString(R.string.weather), intent, R.layout.tab_bg_powers);
         Animation a = AnimationUtils.loadAnimation(mContext, R.anim.in_animation1);
         mTabHost.setAnimation(a);
         mTabHost.setCurrentTab(0);
@@ -114,19 +122,41 @@ public class PlanetActivity extends TabActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.credits:
-            CreditDialog creditDialog = new CreditDialog(this);
-            creditDialog.show();
-            return true;
-        default:
-            return super.onOptionsItemSelected(item);
+            case R.id.credits:
+                CreditDialog creditDialog = new CreditDialog(this);
+                creditDialog.show();
+                return true;
+            case R.id.settings:
+                Intent settingsIntent = new Intent();
+                settingsIntent.setClass(this, SettingsActivity.class);
+                startActivity(settingsIntent);
+                return true;
+            case R.id.stop:
+                android.os.Process.killProcess(android.os.Process.myPid());
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
     
     @Override
     public void onPause() {
         super.onPause();
-        //finish();
+//        Intent settingsIntent = new Intent();
+//        settingsIntent.setClass(this, PlanetActivity.class);
+//        startActivity(settingsIntent);
+//        android.os.Process.killProcess(android.os.Process.myPid());
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+    
+    @Override
+    protected void onStop(){
+       super.onStop();
+       saveData();
     }
     
     private void setupTab(final View view, final String tag, Intent intent, int tab_bg) {
@@ -143,10 +173,69 @@ public class PlanetActivity extends TabActivity {
         return view;
     }
     
-    @Override
-    protected void onStop(){
-       super.onStop();
-       saveData();
+    public static void setPower(int power) {
+        mPower = power;
+        mPowerStartTime = new Date().getTime();
+        
+        saveSingleData("power", mPower);
+        saveSingleData("powertime", mPowerStartTime);
+    }
+    
+    public static void progress() {
+        
+        float difference = new Date().getTime() - mLastLogin;
+        difference = difference / (1000 * 60 * 0.5f);
+        if(difference >= 1) {
+            long impactPopulation = 0;
+            long impactMood = 0;
+            long impactTemperature = 0;
+            long impactEnvironment = 0;
+            long impactElements = 0;
+            
+            String number = String.valueOf(mPower);
+            if(number.length() < 3) {
+                number = "0" + number;
+            }
+            if(number.length() < 3) {
+                number = "0" + number;
+            }
+            boolean found = false;
+            
+            String[] powers = mContext.getResources().getStringArray(R.array.powers);
+            int i = 0;
+            while(i < powers.length && !found) {
+                if(powers[i].equalsIgnoreCase(number)) {
+                    impactPopulation = Long.valueOf(powers[i+5]);
+                    impactMood = Long.valueOf(powers[i+6]);
+                    impactTemperature = Long.valueOf(powers[i+7]);
+                    impactEnvironment = Long.valueOf(powers[i+8]);
+                    impactElements = Long.valueOf(powers[i+9]);
+                    found = true;
+                }
+                i+=10;
+            }
+            if(found) {
+                if(impactPopulation == 4) {
+                    // nothing
+                } else if(impactPopulation == 1) {
+                    mPopulation -= 3 * difference;
+                } else if(impactPopulation == 2) {
+                    mPopulation -= 2 * difference;
+                } else if(impactPopulation == 3) {
+                    mPopulation -= 1 * difference;
+                } else if(impactPopulation == 5) {
+                    mPopulation += 1 * difference;
+                } else if(impactPopulation == 6) {
+                    mPopulation += 2 * difference;
+                } else if(impactPopulation == 7) {
+                    mPopulation += 3 * difference;
+                }
+            }
+            
+            mLastLogin = new Date().getTime();
+            saveSingleData("lastlogin", mLastLogin);
+            saveData();
+        }
     }
     
     public void notification(String text) {
@@ -184,81 +273,64 @@ public class PlanetActivity extends TabActivity {
         toast.show();
     }
     
-    private void initData() {
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+    private void initData() { 
+        mSettings = getSharedPreferences(PREFS_NAME, 0);
+        mEditor = mSettings.edit();
         
-        mName = settings.getString("name", "Corn");
         
-        mLevel = settings.getInt("level", 1);
-        mMood = settings.getInt("mood", 50);
-        mEnvironment = settings.getInt("environment", 50);
-        mFaith = settings.getInt("faith", 50);
-        mPower = settings.getInt("power", 0);
+        mName = mSettings.getString("name", "Corn");
         
-        mPopulation = settings.getLong("population", 0);
-        mLastLogin = settings.getLong("lastlogin", 0);
-        mMana = settings.getLong("resources", 10);
-        mPowerStartTime = settings.getLong("powertime", 0);
+        mPower = mSettings.getInt("power", 0);
         
-//        mPower = 1;
-//        mPowerStartTime = new Date().getTime();                
+        mLastLogin = mSettings.getLong("lastlogin", new Date().getTime());
+        
+        mLevel = mSettings.getFloat("level", 1);
+        mMood = mSettings.getFloat("mood", 50);
+        mEnvironment = mSettings.getFloat("environment", 50);
+        mTemperature = mSettings.getFloat("faith", 50);    
+        mPopulation = mSettings.getFloat("population", 0);
+        mElements = mSettings.getFloat("resources", 10);
+        mPowerStartTime = mSettings.getFloat("powertime", 0);
+        
+        progress();
     }
     
-    private void saveData() {
-        Date currentDate = new Date();
+    private static void saveData() {                
+        mEditor.putString("name", mName);
         
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-                
-        editor.putString("name", mName);
+        mEditor.putInt("power", mPower);
         
-        editor.putInt("level", mLevel);
-        editor.putInt("mood", mMood);
-        editor.putInt("environment", mEnvironment);
-        editor.putInt("faith", mFaith);
-        editor.putInt("power", mPower);
-        
-        editor.putLong("population", mPopulation);
-        editor.putLong("lastlogin", currentDate.getTime());
-        editor.putLong("resources", mMana);
-        editor.putLong("powertime", mPowerStartTime);
+        mEditor.putFloat("level", mLevel);
+        mEditor.putFloat("mood", mMood);
+        mEditor.putFloat("environment", mEnvironment);
+        mEditor.putFloat("faith", mTemperature);    
+        mEditor.putFloat("population", mPopulation);
+        mEditor.putFloat("resources", mElements);
+        mEditor.commit();
     }
     
-    public void saveSingleData(String name, String data) {
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-                
-        editor.putString(name, data);
+    public static void saveSingleData(String name, String data) {     
+        mEditor.putString(name, data);
+        mEditor.commit();
     }
     
-    public void saveSingleData(String name, float data) {
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-                
-        editor.putFloat(name, data);   
+    public static void saveSingleData(String name, float data) {    
+        mEditor.putFloat(name, data);
+        mEditor.commit();
     }
     
-    public void saveSingleData(String name, long data) {
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-                
-        editor.putLong(name, data);
+    public static void saveSingleData(String name, long data) {
+        mEditor.putLong(name, data);
+        mEditor.commit();
     }
     
-    public void saveSingleData(String name, int data) {
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-                
-        editor.putInt(name, data);
+    public static void saveSingleData(String name, int data) {                
+        mEditor.putInt(name, data);
+        mEditor.commit();
     }
     
-    public void saveSingleData(String name, Boolean data) {
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-                
-        editor.putBoolean(name, data);
-    }
-    
-    
-    
+    public static void saveSingleData(String name, Boolean data) {               
+        mEditor.putBoolean(name, data);
+        mEditor.commit();
+    }  
 }

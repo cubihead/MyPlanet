@@ -78,7 +78,7 @@
 			            android:paddingRight="5dip"
 			            android:paddingLeft="5dip"
 			            android:singleLine="true"
-			            android:textAppearance="?android:attr/textAppearanceSmall"
+			            android:textSize="14dip"
 			            android:text="@string/population" />
 					
 					<LinearLayout
@@ -110,7 +110,7 @@
 			            android:paddingRight="5dip"
 			            android:paddingLeft="5dip"
 			            android:singleLine="true"
-			            android:textAppearance="?android:attr/textAppearanceSmall"
+			            android:textSize="14dip"
 			            android:text="@string/mood" />
 					
 					<LinearLayout
@@ -142,8 +142,8 @@
 			            android:paddingRight="5dip"
 			            android:paddingLeft="5dip"
 			            android:singleLine="true"
-			            android:textAppearance="?android:attr/textAppearanceSmall"
-			            android:text="@string/faith" />
+			            android:textSize="14dip"
+			            android:text="@string/temperature" />
 					
 					<LinearLayout
 						android:layout_width="fill_parent"
@@ -174,7 +174,7 @@
 			            android:paddingRight="5dip"
 			            android:paddingLeft="5dip"
 			            android:singleLine="true"
-			            android:textAppearance="?android:attr/textAppearanceSmall"
+			            android:textSize="14dip"
 			            android:text="@string/environment" />
 					
 					<LinearLayout
@@ -206,8 +206,8 @@
 			            android:paddingRight="5dip"
 			            android:paddingLeft="5dip"
 			            android:singleLine="true"
-			            android:textAppearance="?android:attr/textAppearanceSmall"
-			            android:text="@string/mana" />
+			            android:textSize="14dip"
+			            android:text="@string/elements" />
 					
 					<LinearLayout
 						android:layout_width="fill_parent"

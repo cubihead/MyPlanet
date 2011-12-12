@@ -3,4 +3,10 @@
     <item android:id="@+id/credits"
           android:title="@string/credits"
           android:icon="@drawable/ic_menu_credits" />
+    <item android:id="@+id/settings"
+          android:title="@string/settings"
+          android:icon="@drawable/ic_menu_settings" />
+    <item android:id="@+id/stop"
+          android:title="@string/stop"
+          android:icon="@drawable/ic_menu_stop" />
 </menu>

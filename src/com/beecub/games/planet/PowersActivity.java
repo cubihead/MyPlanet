@@ -23,7 +23,7 @@ import android.widget.TextView;
 public class PowersActivity extends Activity {
     
     public ArrayList<Task> mpowers = new ArrayList<Task>();
-    public ListViewAdapter mAdapter;
+    public static ListViewAdapter mAdapter;
     private float oldTouchValue;
 
     @Override
@@ -64,7 +64,7 @@ public class PowersActivity extends Activity {
         super.onResume();
         
         mpowers = new ArrayList<Task>();
-        this.mAdapter = new ListViewAdapter(this, R.layout.row, mpowers);
+        mAdapter = new ListViewAdapter(this, R.layout.row, mpowers);
         //mAdapter.notifyDataSetChanged();
         
         ListView lv = (ListView) findViewById(R.id.list_task);
@@ -74,12 +74,8 @@ public class PowersActivity extends Activity {
                 
                 PlanetActivity.mCurrentPosition = position;
                 
-                if(position == 1) {
-                    
-                }
-                else if(position == 2) {
-                    
-                }
+                PlanetActivity.setPower(position + 1);
+                Log.v("beecub", "" + PlanetActivity.mPower);
                 
                 PlanetActivity.mTabHost.setCurrentTab(0);
             }
@@ -94,12 +90,12 @@ public class PowersActivity extends Activity {
         while(i < powers.length) {
             int resID = getResources().getIdentifier("power_" + powers[i+4], "drawable", getPackageName());
             Drawable icon;
-            if(resID == 0) 
+            if(resID == 0)
                 icon = res.getDrawable(R.drawable.icon);
             else
                 icon = res.getDrawable(resID);
             
-            mAdapter.add(new Task(Integer.valueOf(powers[i]), powers[i+1], powers[i+2], Long.valueOf(powers[i+3]), icon, Integer.valueOf(powers[i+5]), Integer.valueOf(powers[i+6]), Integer.valueOf(powers[i+7]), Integer.valueOf(powers[i+8]), Integer.valueOf(powers[i+9])));
+            mAdapter.insert(new Task(Integer.valueOf(powers[i]), powers[i+1], powers[i+2], Long.valueOf(powers[i+3]), icon, Integer.valueOf(powers[i+5]), Integer.valueOf(powers[i+6]), Integer.valueOf(powers[i+7]), Integer.valueOf(powers[i+8]), Integer.valueOf(powers[i+9])), 0);
             i+=10;
         }
         lv.setSelection(PlanetActivity.mCurrentPosition);
@@ -125,8 +121,13 @@ public class PowersActivity extends Activity {
                 TextView tv1 = (TextView) v.findViewById(R.id.name);
                 TextView tv2 = (TextView) v.findViewById(R.id.cost);
                 //TextView tv3 = (TextView) v.findViewById(R.id.description);
-                ImageView iv1 = (ImageView) v.findViewById(R.id.rowicon);
+                TextView tvi1 = (TextView) v.findViewById(R.id.impactPopulationText);
+                TextView tvi2 = (TextView) v.findViewById(R.id.impactMoodText);
+                TextView tvi3 = (TextView) v.findViewById(R.id.impactFaithText);
+                TextView tvi4 = (TextView) v.findViewById(R.id.impactEnvironmentText);
+                TextView tvi5 = (TextView) v.findViewById(R.id.impactManaText);
                 
+                ImageView iv1 = (ImageView) v.findViewById(R.id.rowicon);                
                 ImageView ivi1 = (ImageView) v.findViewById(R.id.impactPopulationImage);
                 ImageView ivi2 = (ImageView) v.findViewById(R.id.impactMoodImage);
                 ImageView ivi3 = (ImageView) v.findViewById(R.id.impactFaithImage);
@@ -145,6 +146,23 @@ public class PowersActivity extends Activity {
 //                    tv3.setText(o.getDescription());
 //                    tv3.setTypeface(PlanetActivity.mTypeface);
 //                }
+                if(tvi1 != null) {
+                    tvi1.setTypeface(PlanetActivity.mTypeface);
+                }
+                if(tvi2 != null) {
+                    tvi2.setTypeface(PlanetActivity.mTypeface);
+                }
+                if(tvi3 != null) {
+                    tvi3.setTypeface(PlanetActivity.mTypeface);
+                }
+                if(tvi4 != null) {
+                    tvi4.setTypeface(PlanetActivity.mTypeface);
+                }
+                if(tvi5 != null) {
+                    tvi5.setTypeface(PlanetActivity.mTypeface);
+                }
+                
+                
                 if(iv1 != null) {
                     iv1.setBackgroundDrawable(o.getIcon());
                     iv1.setImageDrawable(this.getContext().getResources().getDrawable(R.drawable.powers_border));
@@ -161,7 +179,7 @@ public class PowersActivity extends Activity {
                     ivi2.setImageDrawable(icon);
                 }
                 if(ivi3 != null) {
-                    int resID = getResources().getIdentifier("impact_" + o.getImpactFaith(), "drawable", getPackageName());
+                    int resID = getResources().getIdentifier("impact_" + o.getImpactTemperature(), "drawable", getPackageName());
                     Drawable icon = getResources().getDrawable(resID);
                     ivi3.setImageDrawable(icon);
                 }
@@ -187,7 +205,7 @@ public class PowersActivity extends Activity {
         private long mCost;
         private int mImpactPopulation;
         private int mImpactMood;
-        private int mImpactFaith;
+        private int mImpactTemperature;
         private int mImpactEnvironment;
         private int mImpactMana;
         private Drawable mIcon;
@@ -200,7 +218,7 @@ public class PowersActivity extends Activity {
             this.mIcon = image;
             this.mImpactPopulation = impactPopulation;
             this.mImpactMood = impactMood;
-            this.mImpactFaith = impactFaith;
+            this.mImpactTemperature = impactFaith;
             this.mImpactEnvironment = impactEnvironment;
             this.mImpactMana = impactMana;
         }
@@ -226,8 +244,8 @@ public class PowersActivity extends Activity {
         public int getImpactMood() {
             return this.mImpactMood;
         }
-        public int getImpactFaith() {
-            return this.mImpactFaith;
+        public int getImpactTemperature() {
+            return this.mImpactTemperature;
         }
         public int getImpactEnvironment() {
             return this.mImpactEnvironment;
