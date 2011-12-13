@@ -15,7 +15,6 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -739,7 +738,6 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
     public PlanetView(Context context) {
         super(context);
 
-        // register our interest in hearing about changes to our surface
         SurfaceHolder holder = getHolder();
         holder.addCallback(this);
 

@@ -26,6 +26,7 @@ public class OverviewActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+        mPlanetView.getThread().pause();
     }
     
     @Override
