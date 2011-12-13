@@ -54,6 +54,7 @@ public class PlanetActivity extends TabActivity {
     
     public static int mPower = 0;
     public static float mPowerStartTime;
+    public static float mPowerCalculationTime;
     
     public static Typeface mTypeface;    
     static TabHost mTabHost;
@@ -174,17 +175,59 @@ public class PlanetActivity extends TabActivity {
     }
     
     public static void setPower(int power) {
-        mPower = power;
-        mPowerStartTime = new Date().getTime();
-        
-        saveSingleData("power", mPower);
-        saveSingleData("powertime", mPowerStartTime);
+        if(mPower != power) {
+            String number = String.valueOf(mPower);
+            if(number.length() < 3) {
+                number = "0" + number;
+            }
+            if(number.length() < 3) {
+                number = "0" + number;
+            }
+            
+            boolean found = false;
+            int costs = 0;
+            
+            String[] powers = mContext.getResources().getStringArray(R.array.powers);
+            int i = 0;
+            while(i < powers.length && !found) {
+                if(powers[i].equalsIgnoreCase(number)) {
+                    costs = Integer.valueOf(powers[i+3]);
+                    found = true;
+                }
+                i+=10;
+            }
+            if(found) {
+                if(costs < mElements) {
+                    mElements -= costs;
+                    
+                    mPower = power;
+                    mPowerStartTime = new Date().getTime();
+                    mPowerCalculationTime = mPowerStartTime;
+                    
+                    saveSingleData("power", mPower);
+                    saveSingleData("powertime", mPowerStartTime);
+                    saveSingleData("powercalctime", mPowerCalculationTime);
+                    saveSingleData("resources", mElements);
+                    
+                    mTabHost.setCurrentTab(0);
+                } else {
+                    //doToast("test");
+                }
+            }
+        }
     }
     
-    public static void progress() {
+    public static void progress(boolean login) {
         
-        float difference = new Date().getTime() - mLastLogin;
+        float difference = 0;
+        if(login) {
+            difference = new Date().getTime() - mLastLogin;
+            mPowerCalculationTime = new Date().getTime();
+        } else
+            difference = new Date().getTime() - mPowerCalculationTime;
         difference = difference / (1000 * 60 * 0.5f);
+        
+        Log.v("beecub", "dif: " + difference);
         if(difference >= 1) {
             long impactPopulation = 0;
             long impactMood = 0;
@@ -214,26 +257,106 @@ public class PlanetActivity extends TabActivity {
                 }
                 i+=10;
             }
-            if(found) {
-                if(impactPopulation == 4) {
-                    // nothing
-                } else if(impactPopulation == 1) {
-                    mPopulation -= 3 * difference;
-                } else if(impactPopulation == 2) {
-                    mPopulation -= 2 * difference;
-                } else if(impactPopulation == 3) {
-                    mPopulation -= 1 * difference;
-                } else if(impactPopulation == 5) {
-                    mPopulation += 1 * difference;
-                } else if(impactPopulation == 6) {
-                    mPopulation += 2 * difference;
-                } else if(impactPopulation == 7) {
-                    mPopulation += 3 * difference;
-                }
-            }
             
-            mLastLogin = new Date().getTime();
-            saveSingleData("lastlogin", mLastLogin);
+            if(impactPopulation == 4) {
+                // nothing
+            } else if(impactPopulation == 1) {
+                mPopulation -= 3 * difference;
+            } else if(impactPopulation == 2) {
+                mPopulation -= 2 * difference;
+            } else if(impactPopulation == 3) {
+                mPopulation -= 1 * difference;
+            } else if(impactPopulation == 5) {
+                mPopulation += 1 * difference;
+            } else if(impactPopulation == 6) {
+                mPopulation += 2 * difference;
+            } else if(impactPopulation == 7) {
+                mPopulation += 3 * difference;
+            }
+            if(mPopulation < 0)
+                mPopulation = 0;
+            
+            if(impactMood == 4) {
+                // nothing
+            } else if(impactMood == 1) {
+                mMood -= 3 * difference;
+            } else if(impactMood == 2) {
+                mMood -= 2 * difference;
+            } else if(impactMood == 3) {
+                mMood -= 1 * difference;
+            } else if(impactMood == 5) {
+                mMood += 1 * difference;
+            } else if(impactMood == 6) {
+                mMood += 2 * difference;
+            } else if(impactMood == 7) {
+                mMood += 3 * difference;
+            }
+            if(mMood < 0)
+                mMood = 0;
+            if(mMood > 100)
+                mMood = 100;
+            
+            if(impactTemperature == 4) {
+                // nothing
+            } else if(impactTemperature == 1) {
+                mTemperature -= 3 * difference;
+            } else if(impactTemperature == 2) {
+                mTemperature -= 2 * difference;
+            } else if(impactTemperature == 3) {
+                mTemperature -= 1 * difference;
+            } else if(impactTemperature == 5) {
+                mTemperature += 1 * difference;
+            } else if(impactTemperature == 6) {
+                mTemperature += 2 * difference;
+            } else if(impactTemperature == 7) {
+                mTemperature += 3 * difference;
+            }
+            if(mTemperature < 0)
+                mTemperature = 0;
+            if(mTemperature > 100)
+                mTemperature = 100;
+            
+            if(impactEnvironment == 4) {
+                // nothing
+            } else if(impactEnvironment == 1) {
+                mEnvironment -= 3 * difference;
+            } else if(impactEnvironment == 2) {
+                mEnvironment -= 2 * difference;
+            } else if(impactEnvironment == 3) {
+                mEnvironment -= 1 * difference;
+            } else if(impactEnvironment == 5) {
+                mEnvironment += 1 * difference;
+            } else if(impactEnvironment == 6) {
+                mEnvironment += 2 * difference;
+            } else if(impactEnvironment == 7) {
+                mEnvironment += 3 * difference;
+            }
+            if(mEnvironment < 0)
+                mEnvironment = 0;
+            if(mEnvironment > 100)
+                mEnvironment = 100;
+            
+            if(impactElements == 4) {
+                // nothing
+            } else if(impactElements == 1) {
+                mElements -= 3 * difference;
+            } else if(impactElements == 2) {
+                mElements -= 2 * difference;
+            } else if(impactElements == 3) {
+                mElements -= 1 * difference;
+            } else if(impactElements == 5) {
+                mElements += 1 * difference;
+            } else if(impactElements == 6) {
+                mElements += 2 * difference;
+            } else if(impactElements == 7) {
+                mElements += 3 * difference;
+            }
+            if(mElements < 0)
+                mElements = 0;
+            if(mElements > 100)
+                mElements = 100;
+            
+            mPowerCalculationTime = new Date().getTime();
             saveData();
         }
     }
@@ -290,9 +413,9 @@ public class PlanetActivity extends TabActivity {
         mTemperature = mSettings.getFloat("faith", 50);    
         mPopulation = mSettings.getFloat("population", 0);
         mElements = mSettings.getFloat("resources", 10);
-        mPowerStartTime = mSettings.getFloat("powertime", 0);
+        mPowerStartTime = mSettings.getFloat("powertime", new Date().getTime());
         
-        progress();
+        progress(true);
     }
     
     private static void saveData() {                
@@ -300,12 +423,15 @@ public class PlanetActivity extends TabActivity {
         
         mEditor.putInt("power", mPower);
         
+        mEditor.putLong("lastlogin", new Date().getTime());
+        
         mEditor.putFloat("level", mLevel);
         mEditor.putFloat("mood", mMood);
         mEditor.putFloat("environment", mEnvironment);
         mEditor.putFloat("faith", mTemperature);    
         mEditor.putFloat("population", mPopulation);
         mEditor.putFloat("resources", mElements);
+        mEditor.putFloat("powertime", mPowerStartTime);
         mEditor.commit();
     }
     

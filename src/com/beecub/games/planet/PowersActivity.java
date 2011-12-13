@@ -75,9 +75,6 @@ public class PowersActivity extends Activity {
                 PlanetActivity.mCurrentPosition = position;
                 
                 PlanetActivity.setPower(position + 1);
-                Log.v("beecub", "" + PlanetActivity.mPower);
-                
-                PlanetActivity.mTabHost.setCurrentTab(0);
             }
         });
         lv.setSelection(PlanetActivity.mCurrentPosition);

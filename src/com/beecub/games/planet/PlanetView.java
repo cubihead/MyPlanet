@@ -2,6 +2,7 @@ package com.beecub.games.planet;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
 
 import android.beecub.games.planet.R;
 import android.content.Context;
@@ -72,11 +73,24 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         private Drawable mPlanetDeluge2;
         private Drawable mPlanetDeluge3;
         private Drawable mPlanetDeluge4;
+        // planet fog
+        private Drawable mPlanetFog;
+        // planet storm
+        private Drawable mPlanetStorm;
+        private Drawable mPlanetStorm_l1;
+        private Drawable mPlanetStorm_l2;
+        private Drawable mPlanetStorm_l3;
+        private Drawable mPlanetStorm_l4;
+        private Drawable mPlanetStorm_l5;
+        private Drawable mPlanetStorm_l6;
+        private Drawable mPlanetStorm_l7;
+        private Drawable mPlanetStorm_l8;
         
         private double mDaytime;
         private boolean bDaytime = false;
         
         private float mRotation;
+        private float mRotation2;
         
         private boolean mRun = false;
         private boolean mPause = false;
@@ -98,12 +112,6 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
 
             // planet
             mPlanetImage = mResources.getDrawable(R.drawable.planet);
-            if(PlanetActivity.mEnvironment < 30) 
-                mPlanetSurface = mResources.getDrawable(R.drawable.planet_surface_low);
-            else if(PlanetActivity.mEnvironment >= 70)
-                mPlanetSurface = mResources.getDrawable(R.drawable.planet_surface_full);
-            else
-                mPlanetSurface = mResources.getDrawable(R.drawable.planet_surface_half);
             mPlanetBorder = mResources.getDrawable(R.drawable.planet_border);
             
             // moon
@@ -117,6 +125,18 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             mPlanetDeluge2 = mResources.getDrawable(R.drawable.planet_deluge_2);
             mPlanetDeluge3 = mResources.getDrawable(R.drawable.planet_deluge_3);
             mPlanetDeluge4 = mResources.getDrawable(R.drawable.planet_deluge_4);
+            // planet fog
+            mPlanetFog = mResources.getDrawable(R.drawable.fog);
+            // planet storm
+            mPlanetStorm = mResources.getDrawable(R.drawable.storm);
+            mPlanetStorm_l1 = mResources.getDrawable(R.drawable.storm_l1);
+            mPlanetStorm_l2 = mResources.getDrawable(R.drawable.storm_l2);
+            mPlanetStorm_l3 = mResources.getDrawable(R.drawable.storm_l3);
+            mPlanetStorm_l4 = mResources.getDrawable(R.drawable.storm_l4);
+            mPlanetStorm_l5 = mResources.getDrawable(R.drawable.storm_l5);
+            mPlanetStorm_l6 = mResources.getDrawable(R.drawable.storm_l6);
+            mPlanetStorm_l7 = mResources.getDrawable(R.drawable.storm_l7);
+            mPlanetStorm_l8 = mResources.getDrawable(R.drawable.storm_l8);
             
             // space platform
             mSpacePlatformImage = mResources.getDrawable(R.drawable.space_platform);
@@ -252,6 +272,22 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             //Log.v(Planet.LOG_TAG, "Canvas Width: " + mCanvasWidth + "| Planet Width: " + mPlanetWidth);
             //Log.v(Planet.LOG_TAG, "Canvas Height: " + mCanvasHeight + "| Planet Height: " + mPlanetHeight);
             
+            mRotation += 0.03;
+            if(mRotation >= 360) mRotation = 0;
+            mRotation2 += 0.05;
+            if(mRotation2 >= 360) mRotation2 = 0;
+            
+            if(PlanetActivity.mEnvironment < 30) 
+                mPlanetSurface = mResources.getDrawable(R.drawable.planet_surface_low);
+            else if(PlanetActivity.mEnvironment >= 70)
+                mPlanetSurface = mResources.getDrawable(R.drawable.planet_surface_full);
+            else
+                mPlanetSurface = mResources.getDrawable(R.drawable.planet_surface_half);
+            
+            if(PlanetActivity.mPower == 7) {
+                mPlanetSurface = mResources.getDrawable(R.drawable.planet_surface_low);
+            }
+            
             mPlanetImage.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, 
                     mCanvasHeight / 2 - mPlanetHeight / 2, 
                     mCanvasWidth / 2 + mPlanetWidth / 2, 
@@ -267,9 +303,6 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             
             canvas.rotate(mRotation, mCanvasWidth / 2, mCanvasHeight / 2);
             
-            mRotation += 0.03;
-            if(mRotation >= 360) mRotation = 0;
-            
             mPlanetImage.draw(canvas);
             mPlanetSurface.draw(canvas);
             if(bDaytime)
@@ -277,13 +310,13 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             
             canvas.restore();
             
+            drawPower(canvas);
+            
             drawMoonSun(canvas);
             if(!bDaytime)
                 drawPopulation(canvas);
             
             drawObjects(canvas);
-            
-            drawPower(canvas);
             
             mPlanetBorder.draw(canvas);
             
@@ -293,7 +326,7 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             
             drawBasis(canvas);
             
-            PlanetActivity.progress();
+            PlanetActivity.progress(false);
         }
         
         private void drawBasis(Canvas canvas) {
@@ -373,6 +406,46 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
                 if(time > 180) {
                     mPlanetDeluge4.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, mCanvasHeight / 2 - mPlanetHeight / 2, mCanvasWidth / 2 + mPlanetWidth / 2, mCanvasHeight / 2 + mPlanetHeight / 2);
                     mPlanetDeluge4.draw(canvas);
+                }
+            } else if(PlanetActivity.mPower == 3) {
+                canvas.rotate(mRotation2, mCanvasWidth / 2, mCanvasHeight / 2);
+                mPlanetFog.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, mCanvasHeight / 2 - mPlanetHeight / 2, mCanvasWidth / 2 + mPlanetWidth / 2, mCanvasHeight / 2 + mPlanetHeight / 2);
+                mPlanetFog.draw(canvas);
+            } else if(PlanetActivity.mPower == 2 || PlanetActivity.mPower == 4) {
+                canvas.rotate(mRotation2, mCanvasWidth / 2, mCanvasHeight / 2);
+                mPlanetStorm.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, mCanvasHeight / 2 - mPlanetHeight / 2, mCanvasWidth / 2 + mPlanetWidth / 2, mCanvasHeight / 2 + mPlanetHeight / 2);
+                mPlanetStorm.draw(canvas);
+            } else if(PlanetActivity.mPower == 5 || PlanetActivity.mPower == 6) {
+                canvas.rotate(mRotation2, mCanvasWidth / 2, mCanvasHeight / 2);
+                mPlanetStorm.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, mCanvasHeight / 2 - mPlanetHeight / 2, mCanvasWidth / 2 + mPlanetWidth / 2, mCanvasHeight / 2 + mPlanetHeight / 2);
+                mPlanetStorm.draw(canvas);
+                
+                Random random = new Random();
+                int r = random.nextInt(100) + 1;
+                if(r == 1) {
+                    mPlanetStorm_l1.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, mCanvasHeight / 2 - mPlanetHeight / 2, mCanvasWidth / 2 + mPlanetWidth / 2, mCanvasHeight / 2 + mPlanetHeight / 2);
+                    mPlanetStorm_l1.draw(canvas);
+                } else if(r == 2) {
+                    mPlanetStorm_l2.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, mCanvasHeight / 2 - mPlanetHeight / 2, mCanvasWidth / 2 + mPlanetWidth / 2, mCanvasHeight / 2 + mPlanetHeight / 2);
+                    mPlanetStorm_l2.draw(canvas);
+                } else if(r == 3) {
+                    mPlanetStorm_l3.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, mCanvasHeight / 2 - mPlanetHeight / 2, mCanvasWidth / 2 + mPlanetWidth / 2, mCanvasHeight / 2 + mPlanetHeight / 2);
+                    mPlanetStorm_l3.draw(canvas);
+                } else if(r == 4) {
+                    mPlanetStorm_l4.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, mCanvasHeight / 2 - mPlanetHeight / 2, mCanvasWidth / 2 + mPlanetWidth / 2, mCanvasHeight / 2 + mPlanetHeight / 2);
+                    mPlanetStorm_l4.draw(canvas);
+                } else if(r == 5) {
+                    mPlanetStorm_l5.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, mCanvasHeight / 2 - mPlanetHeight / 2, mCanvasWidth / 2 + mPlanetWidth / 2, mCanvasHeight / 2 + mPlanetHeight / 2);
+                    mPlanetStorm_l5.draw(canvas);
+                } else if(r == 6) {
+                    mPlanetStorm_l6.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, mCanvasHeight / 2 - mPlanetHeight / 2, mCanvasWidth / 2 + mPlanetWidth / 2, mCanvasHeight / 2 + mPlanetHeight / 2);
+                    mPlanetStorm_l6.draw(canvas);
+                } else if(r == 7) {
+                    mPlanetStorm_l7.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, mCanvasHeight / 2 - mPlanetHeight / 2, mCanvasWidth / 2 + mPlanetWidth / 2, mCanvasHeight / 2 + mPlanetHeight / 2);
+                    mPlanetStorm_l7.draw(canvas);
+                } else if(r == 8) {
+                    mPlanetStorm_l8.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, mCanvasHeight / 2 - mPlanetHeight / 2, mCanvasWidth / 2 + mPlanetWidth / 2, mCanvasHeight / 2 + mPlanetHeight / 2);
+                    mPlanetStorm_l8.draw(canvas);
                 }
             }
             
@@ -572,7 +645,7 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
                     switch (this.mMode)
                     {
                         default:
-                            localDrawable = this.mGreenBar;
+                            localDrawable = this.mYellowBar;
                             break;
                         case 0:
                             localDrawable = this.mGreenBar;
@@ -589,7 +662,7 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
                     switch (this.mMode)
                     {
                         default:
-                            localDrawable = this.mGreenBar;
+                            localDrawable = this.mYellowBar;
                             break;
                         case 0:
                             localDrawable = this.mGreenBar;
@@ -606,16 +679,16 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
                     switch (this.mMode)
                     {
                         default:
-                            localDrawable = this.mBlueBar;
+                            localDrawable = this.mWhiteBar;
                             break;
                         case 0:
-                            localDrawable = this.mBlueBar;
+                            localDrawable = this.mRedBar;
                             break;
                         case 1:
                             localDrawable = this.mWhiteBar;
                             break;
                         case 2:
-                            localDrawable = this.mRedBar;
+                            localDrawable = this.mBlueBar;
                             break;
                     }
                     break;
