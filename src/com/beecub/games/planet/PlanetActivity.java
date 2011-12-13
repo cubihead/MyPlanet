@@ -16,6 +16,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -69,6 +70,8 @@ public class PlanetActivity extends TabActivity {
     public static SharedPreferences mSettings;
     public static Editor mEditor;
     
+    public static View toastView;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +82,9 @@ public class PlanetActivity extends TabActivity {
         
         mPackageName = getPackageName();
         mContext = getApplicationContext();
+        
+        LayoutInflater inflater = getLayoutInflater();
+        toastView = inflater.inflate(R.layout.custom_toast, (ViewGroup) findViewById(R.id.toast_layout_root));
         
         initData();        
         
@@ -147,6 +153,7 @@ public class PlanetActivity extends TabActivity {
 //        settingsIntent.setClass(this, PlanetActivity.class);
 //        startActivity(settingsIntent);
 //        android.os.Process.killProcess(android.os.Process.myPid());
+        OverviewActivity.mPlanetView.getThread().pause();
     }
     
     @Override
@@ -158,6 +165,14 @@ public class PlanetActivity extends TabActivity {
     protected void onStop(){
        super.onStop();
        saveData();
+    }
+    
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+            android.os.Process.killProcess(android.os.Process.myPid());
+        }
+        return super.onKeyDown(keyCode, event);
     }
     
     private void setupTab(final View view, final String tag, Intent intent, int tab_bg) {
@@ -176,7 +191,7 @@ public class PlanetActivity extends TabActivity {
     
     public static void setPower(int power) {
         if(mPower != power) {
-            String number = String.valueOf(mPower);
+            String number = String.valueOf(power);
             if(number.length() < 3) {
                 number = "0" + number;
             }
@@ -211,7 +226,7 @@ public class PlanetActivity extends TabActivity {
                     
                     mTabHost.setCurrentTab(0);
                 } else {
-                    //doToast("test");
+                    doToast(mContext.getResources().getString(R.string.notenough));
                 }
             }
         }
@@ -227,7 +242,6 @@ public class PlanetActivity extends TabActivity {
             difference = new Date().getTime() - mPowerCalculationTime;
         difference = difference / (1000 * 60 * 0.5f);
         
-        Log.v("beecub", "dif: " + difference);
         if(difference >= 1) {
             long impactPopulation = 0;
             long impactMood = 0;
@@ -380,19 +394,17 @@ public class PlanetActivity extends TabActivity {
         mNotificationManager.notify(mNotifications, notification);
     }
     
-    public void doToast(String text) {
-        LayoutInflater inflater = getLayoutInflater();
-        View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) findViewById(R.id.toast_layout_root));
-
-        ImageView image = (ImageView) layout.findViewById(R.id.toast_image);
+    public static void doToast(String text) {        
+        ImageView image = (ImageView) toastView.findViewById(R.id.toast_image);
         image.setImageResource(R.drawable.ic_launcher);
-        TextView tv = (TextView) layout.findViewById(R.id.toast_text);
+        TextView tv = (TextView) toastView.findViewById(R.id.toast_text);
+        tv.setTypeface(mTypeface);
         tv.setText(text);
 
-        Toast toast = new Toast(getApplicationContext());
+        Toast toast = new Toast(mContext);
         toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
         toast.setDuration(Toast.LENGTH_LONG);
-        toast.setView(layout);
+        toast.setView(toastView);
         toast.show();
     }
     

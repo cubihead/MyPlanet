@@ -2,28 +2,38 @@ package com.beecub.games.planet;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 
 
 public class OverviewActivity extends Activity {
     
-    private static PlanetView mPlanetView;
+    public static PlanetView mPlanetView;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        setContentView(new PlanetView(this));
+        
+        mPlanetView = new PlanetView(this);
+        setContentView(mPlanetView);
     }
     
     @Override
     protected void onStop() {
         super.onStop();
-
+        doStart();
+    }
+    
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
     
     @Override
     protected void onResume() {
         super.onResume();
+        Log.v("beecub", "resume");
+        mPlanetView = new PlanetView(this);
+        setContentView(mPlanetView);
     }
     
     public static void doStart() {

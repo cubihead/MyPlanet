@@ -152,15 +152,15 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         public void doStart() {
             synchronized (mSurfaceHolder) {
                 mDaytime = 0;                
-                setRunning(true);
+                //setRunning(true);
                 mPause = false;
             }
         }
         
         public void pause() {
             synchronized (mSurfaceHolder) {
-                Log.v("beecub", "Pause");
-                if (mRun == true) setRunning(false);
+                //if (mRun == true) setRunning(false);
+                mRun = false;
                 mPause = true;
             }
         }
@@ -210,17 +210,19 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
         @Override
         public void run() {
             while (mRun) {
-                Canvas c = null;
-                try {
-                    c = mSurfaceHolder.lockCanvas(null);
-                    synchronized (mSurfaceHolder) {
-                        if(!mPause) {
-                            doDraw(c);
+                if(!mPause) {
+                    Canvas c = null;
+                    try {
+                        c = mSurfaceHolder.lockCanvas(null);
+                        synchronized (mSurfaceHolder) {
+                            if(!mPause) {
+                                doDraw(c);
+                            }
                         }
-                    }
-                } finally {
-                    if (c != null) {
-                        mSurfaceHolder.unlockCanvasAndPost(c);
+                    } finally {
+                        if (c != null) {
+                            mSurfaceHolder.unlockCanvasAndPost(c);
+                        }
                     }
                 }
             }
@@ -767,7 +769,6 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
 
     public void surfaceDestroyed(SurfaceHolder holder) {
         boolean retry = true;
-        //thread.setRunning(false);
         while (retry) {
             try {
                 thread.join();

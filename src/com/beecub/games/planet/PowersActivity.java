@@ -33,6 +33,12 @@ public class PowersActivity extends Activity {
     }
     
     @Override
+    public void onPause() {
+        super.onPause();
+        OverviewActivity.mPlanetView.getThread().pause();
+    }
+    
+    @Override
     public boolean onTouchEvent(MotionEvent touchevent) {
         Log.v("beecub", "onTouchEvent");
         Log.v("beecub", String.valueOf(touchevent.getAction()));
@@ -60,6 +66,7 @@ public class PowersActivity extends Activity {
         return false;
     }
     
+    @Override
     public void onResume() {
         super.onResume();
         
