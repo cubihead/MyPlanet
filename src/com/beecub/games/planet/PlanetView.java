@@ -285,7 +285,7 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             else
                 mPlanetSurface = mResources.getDrawable(R.drawable.planet_surface_half);
             
-            if(PlanetActivity.mPower == 7) {
+            if(PlanetActivity.mPower.getNumber() == 7) {
                 mPlanetSurface = mResources.getDrawable(R.drawable.planet_surface_low);
             }
             
@@ -339,36 +339,16 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             paint.setAntiAlias(true);
             canvas.drawText(PlanetActivity.mName, 10, 30, paint);
             paint.setTextSize(20);
-            canvas.drawText(mResources.getString(R.string.elements) + ": " + (long)(PlanetActivity.mElements) + "/100", 10, 55, paint);
+            canvas.drawText(mResources.getString(R.string.elements) + ": " + (long)(PlanetActivity.mElements) + "/100 (" + (float)(PlanetActivity.mElementsPH) + mResources.getString(R.string.perhour) + ")", 10, 55, paint);
             canvas.drawText(mResources.getString(R.string.population) + ": " + (long)(PlanetActivity.mPopulation), 10, 80, paint);
         }
         
         private void drawPowerNotification(Canvas canvas) {
-            String number = String.valueOf(PlanetActivity.mPower);
             String name = "Nothing";
-            boolean found = false;
             
-            if(number.length() < 2) 
-                number = "0" + number;
-            if(number.length() < 3)
-                number = "0" + number;
-            
-            String[] powers = mResources.getStringArray(R.array.powers);
-            int i = 0;
-            while(i < powers.length && !found) {
-                if(powers[i].equalsIgnoreCase(number)) {
-                    name = powers[i+1];
-                    int resID = getResources().getIdentifier("power_" + powers[i+4], "drawable", PlanetActivity.mPackageName);
-                    mPower = mResources.getDrawable(resID);
-                    found = true;
-                }
-                i+=10;
-            }
-            
-            if(!found) {
-                mPower = mResources.getDrawable(R.drawable.power_000);
-                name = mResources.getString(R.string.nothing);
-            }
+            name = PlanetActivity.mPower.getName();
+            mPower = PlanetActivity.mPower.getDrawable();
+
             mPowerBorder = mResources.getDrawable(R.drawable.powers_border);
             mPower.setBounds(10, mCanvasHeight - 66 - 10 - mResources.getDrawable(R.drawable.bar_green).getIntrinsicHeight(), 10 + 66 + mResources.getDrawable(R.drawable.bar_green).getIntrinsicHeight(), mCanvasHeight - 10);
             mPowerBorder.setBounds(10, mCanvasHeight - 66 - 10 - mResources.getDrawable(R.drawable.bar_green).getIntrinsicHeight(), 10 + 66 + mResources.getDrawable(R.drawable.bar_green).getIntrinsicHeight(), mCanvasHeight - 10);
@@ -389,7 +369,7 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
             float time = new Date().getTime();
             canvas.save();
             
-            if(PlanetActivity.mPower == 8) {
+            if(PlanetActivity.mPower.getNumber() == 8) {
                 canvas.rotate(mRotation, mCanvasWidth / 2, mCanvasHeight / 2);
                 time = time - PlanetActivity.mPowerStartTime;
                 time = time / (1000 * 60);
@@ -408,15 +388,15 @@ public class PlanetView extends SurfaceView implements SurfaceHolder.Callback {
                     mPlanetDeluge4.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, mCanvasHeight / 2 - mPlanetHeight / 2, mCanvasWidth / 2 + mPlanetWidth / 2, mCanvasHeight / 2 + mPlanetHeight / 2);
                     mPlanetDeluge4.draw(canvas);
                 }
-            } else if(PlanetActivity.mPower == 3) {
+            } else if(PlanetActivity.mPower.getNumber() == 3) {
                 canvas.rotate(mRotation2, mCanvasWidth / 2, mCanvasHeight / 2);
                 mPlanetFog.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, mCanvasHeight / 2 - mPlanetHeight / 2, mCanvasWidth / 2 + mPlanetWidth / 2, mCanvasHeight / 2 + mPlanetHeight / 2);
                 mPlanetFog.draw(canvas);
-            } else if(PlanetActivity.mPower == 2 || PlanetActivity.mPower == 4) {
+            } else if(PlanetActivity.mPower.getNumber() == 2 || PlanetActivity.mPower.getNumber() == 4) {
                 canvas.rotate(mRotation2, mCanvasWidth / 2, mCanvasHeight / 2);
                 mPlanetStorm.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, mCanvasHeight / 2 - mPlanetHeight / 2, mCanvasWidth / 2 + mPlanetWidth / 2, mCanvasHeight / 2 + mPlanetHeight / 2);
                 mPlanetStorm.draw(canvas);
-            } else if(PlanetActivity.mPower == 5 || PlanetActivity.mPower == 6) {
+            } else if(PlanetActivity.mPower.getNumber() == 5 || PlanetActivity.mPower.getNumber() == 6) {
                 canvas.rotate(mRotation2, mCanvasWidth / 2, mCanvasHeight / 2);
                 mPlanetStorm.setBounds(mCanvasWidth / 2 - mPlanetWidth / 2, mCanvasHeight / 2 - mPlanetHeight / 2, mCanvasWidth / 2 + mPlanetWidth / 2, mCanvasHeight / 2 + mPlanetHeight / 2);
                 mPlanetStorm.draw(canvas);

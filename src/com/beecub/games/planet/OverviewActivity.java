@@ -2,7 +2,6 @@ package com.beecub.games.planet;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 
 
 public class OverviewActivity extends Activity {
@@ -32,7 +31,6 @@ public class OverviewActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.v("beecub", "resume");
         mPlanetView = new PlanetView(this);
         setContentView(mPlanetView);
     }

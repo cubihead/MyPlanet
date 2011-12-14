@@ -102,5 +102,16 @@
 	    <item>5</item>
 	    <item>3</item>
 	    <item>4</item>
+	    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	    <item>000</item>
+		<item>Nothing</item>
+	    <item></item>
+	    <item>0</item>
+	    <item>000</item>
+	    <item>4</item>
+	    <item>4</item>
+	    <item>4</item>
+	    <item>4</item>
+	    <item>4</item>
     </string-array>
 </resources>
